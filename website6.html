@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexTrade — Crypto & Web3 Platform</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+          colors: {
+            surface: { 900: '#0a0b0f', 800: '#0f1018', 700: '#151621', 600: '#1a1c2e', 500: '#22253a' },
+            neon: { blue: '#3b82f6', purple: '#8b5cf6', cyan: '#06b6d4', green: '#10b981', pink: '#ec4899', orange: '#f59e0b' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #22253a #0a0b0f;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0a0b0f;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #22253a;
+      border-radius: 3px;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes gradient-shift {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes spin-slow {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes ticker {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes count-pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes chart-draw {
+      from {
+        stroke-dashoffset: 1000;
+      }
+
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    @keyframes orbit {
+      from {
+        transform: rotate(0deg) translateX(140px) rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg) translateX(140px) rotate(-360deg);
+      }
+    }
+
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .animate-float-delay {
+      animation: float 4s ease-in-out infinite 1s;
+    }
+
+    .animate-float-delay2 {
+      animation: float 4s ease-in-out infinite 2s;
+    }
+
+    .animate-pulse-glow {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .animate-gradient {
+      background-size: 200% 200%;
+      animation: gradient-shift 4s ease infinite;
+    }
+
+    .animate-spin-slow {
+      animation: spin-slow 20s linear infinite;
+    }
+
+    .animate-ticker {
+      animation: ticker 30s linear infinite;
+    }
+
+    .animate-fade-up {
+      animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    .animate-orbit {
+      animation: orbit 8s linear infinite;
+    }
+
+    .animate-orbit-reverse {
+      animation: orbit 12s linear infinite reverse;
+    }
+
+    .glow-blue {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1);
+    }
+
+    .glow-purple {
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 60px rgba(139, 92, 246, 0.1);
+    }
+
+    .glow-green {
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), 0 0 60px rgba(16, 185, 129, 0.1);
+    }
+
+    .glow-cyan {
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), 0 0 60px rgba(6, 182, 212, 0.1);
+    }
+
+    .text-gradient-blue {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-cyan {
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-green {
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .bg-grid {
+      background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .card-hover {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(59, 130, 246, 0.15);
+    }
+
+    .glass {
+      background: rgba(15, 16, 24, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .glass-light {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .chart-line {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: chart-draw 2s ease forwards;
+    }
+
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+    }
+
+    .toast {
+      transform: translateX(120%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+  </style>
+</head>
+
+<body class="bg-surface-900 text-white font-sans antialiased overflow-x-hidden">
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-20 right-4 z-[100] flex flex-col gap-3"></div>
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center animate-gradient">
+            <span class="iconify text-white text-lg" data-icon="lucide:hexagon"></span>
+          </div>
+          <span class="text-lg font-bold tracking-tight">Nex<span class="text-gradient-blue">Trade</span></span>
+        </div>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-1">
+          <button onclick="navigateTo('home')"
+            class="nav-link active px-3 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            data-nav="home">Home</button>
+          <button onclick="navigateTo('markets')"
+            class="nav-link px-3 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            data-nav="markets">Markets</button>
+          <button onclick="navigateTo('wallet')"
+            class="nav-link px-3 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            data-nav="wallet">Wallet</button>
+          <button onclick="navigateTo('exchange')"
+            class="nav-link px-3 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            data-nav="exchange">Exchange</button>
+          <button onclick="navigateTo('learn')"
+            class="nav-link px-3 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            data-nav="learn">Learn</button>
+          <button onclick="navigateTo('pricing')"
+            class="nav-link px-3 py-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            data-nav="pricing">Pricing</button>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="hidden md:flex items-center gap-3">
+          <button onclick="navigateTo('login')"
+            class="px-4 py-2 text-sm text-zinc-300 hover:text-white transition-colors">Log In</button>
+          <button onclick="navigateTo('signup')"
+            class="px-4 py-2 text-sm font-medium bg-gradient-to-r from-neon-blue to-neon-purple rounded-lg hover:opacity-90 transition-opacity">Sign
+            Up</button>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-toggle" class="md:hidden p-2 text-zinc-400 hover:text-white" onclick="toggleMobileMenu()">
+          <span class="iconify text-xl" data-icon="lucide:menu"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden hidden border-t border-white/5 bg-surface-900/95 backdrop-blur-xl">
+      <div class="px-4 py-4 space-y-1">
+        <button onclick="navigateTo('home');toggleMobileMenu()"
+          class="block w-full text-left px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg">Home</button>
+        <button onclick="navigateTo('markets');toggleMobileMenu()"
+          class="block w-full text-left px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg">Markets</button>
+        <button onclick="navigateTo('wallet');toggleMobileMenu()"
+          class="block w-full text-left px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg">Wallet</button>
+        <button onclick="navigateTo('exchange');toggleMobileMenu()"
+          class="block w-full text-left px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg">Exchange</button>
+        <button onclick="navigateTo('learn');toggleMobileMenu()"
+          class="block w-full text-left px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg">Learn</button>
+        <button onclick="navigateTo('pricing');toggleMobileMenu()"
+          class="block w-full text-left px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/5 rounded-lg">Pricing</button>
+        <div class="pt-3 border-t border-white/5 flex gap-3">
+          <button onclick="navigateTo('login');toggleMobileMenu()"
+            class="flex-1 px-4 py-2 text-sm border border-white/10 rounded-lg text-center">Log In</button>
+          <button onclick="navigateTo('signup');toggleMobileMenu()"
+            class="flex-1 px-4 py-2 text-sm font-medium bg-gradient-to-r from-neon-blue to-neon-purple rounded-lg text-center">Sign
+            Up</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== HOME PAGE ==================== -->
+  <div id="page-home" class="page active">
+
+    <!-- Price Ticker Bar -->
+    <div class="fixed top-16 left-0 right-0 z-40 bg-surface-800/90 border-b border-white/5 overflow-hidden">
+      <div class="flex animate-ticker whitespace-nowrap py-2">
+        <div class="flex gap-8 px-4" id="ticker-content"></div>
+        <div class="flex gap-8 px-4" id="ticker-content-clone"></div>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-grid">
+      <!-- Background Effects -->
+      <div
+        class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-neon-blue/10 rounded-full blur-[120px] animate-pulse-glow">
+      </div>
+      <div
+        class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-neon-purple/10 rounded-full blur-[120px] animate-pulse-glow"
+        style="animation-delay:1.5s"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <!-- Left Content -->
+          <div class="animate-fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-full mb-6">
+              <span class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></span>
+              <span class="text-xs font-medium text-zinc-300">Live Trading — 24/7 Markets</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight leading-[1.05]">
+              The Future of<br>
+              <span
+                class="text-gradient-blue animate-gradient bg-gradient-to-r from-neon-blue via-neon-purple to-neon-cyan bg-[length:200%_200%]">Digital
+                Finance</span>
+            </h1>
+
+            <p class="mt-6 text-lg text-zinc-400 font-light leading-relaxed max-w-lg">
+              Trade 500+ assets on the most secure and intuitive crypto platform. Zero hidden fees, lightning-fast
+              execution.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-4">
+              <button onclick="navigateTo('signup')"
+                class="group px-8 py-3.5 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl font-medium text-sm hover:opacity-90 transition-all glow-blue flex items-center gap-2">
+                Start Trading
+                <span class="iconify text-lg group-hover:translate-x-1 transition-transform"
+                  data-icon="lucide:arrow-right"></span>
+              </button>
+              <button onclick="navigateTo('markets')"
+                class="px-8 py-3.5 border border-white/10 rounded-xl font-medium text-sm hover:bg-white/5 transition-all flex items-center gap-2">
+                <span class="iconify text-lg" data-icon="lucide:play-circle"></span>
+                Watch Demo
+              </button>
+            </div>
+
+            <div class="mt-10 flex items-center gap-8">
+              <div>
+                <div class="text-2xl font-bold counter" data-target="2.4">$0</div>
+                <div class="text-xs text-zinc-500 mt-0.5">Trillion Volume</div>
+              </div>
+              <div class="w-px h-10 bg-white/10"></div>
+              <div>
+                <div class="text-2xl font-bold counter" data-target="12">0</div>
+                <div class="text-xs text-zinc-500 mt-0.5">Million Users</div>
+              </div>
+              <div class="w-px h-10 bg-white/10"></div>
+              <div>
+                <div class="text-2xl font-bold counter" data-target="99.9">0</div>
+                <div class="text-xs text-zinc-500 mt-0.5">% Uptime</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right - Floating Cards -->
+          <div class="relative h-[500px] lg:h-[600px] hidden md:block">
+            <!-- Orbit Ring -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-[300px] h-[300px] border border-white/5 rounded-full animate-spin-slow"></div>
+            </div>
+
+            <!-- Token Card 1 - BTC -->
+            <div class="absolute top-8 right-8 animate-float card-hover">
+              <div class="glass-light rounded-2xl p-5 w-56 glow-blue">
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                    <span class="iconify text-white text-lg" data-icon="cryptocurrency:btc"></span>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-sm">Bitcoin</div>
+                    <div class="text-xs text-zinc-500">BTC</div>
+                  </div>
+                  <span class="ml-auto text-xs text-neon-green font-mono">+2.4%</span>
+                </div>
+                <div class="font-mono font-bold text-xl">$67,842.30</div>
+                <canvas id="mini-chart-btc" width="200" height="50" class="mt-2"></canvas>
+              </div>
+            </div>
+
+            <!-- Token Card 2 - ETH -->
+            <div class="absolute top-1/2 -translate-y-1/2 left-0 animate-float-delay card-hover">
+              <div class="glass-light rounded-2xl p-5 w-56 glow-purple">
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-blue-600 flex items-center justify-center">
+                    <span class="iconify text-white text-lg" data-icon="cryptocurrency:eth"></span>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-sm">Ethereum</div>
+                    <div class="text-xs text-zinc-500">ETH</div>
+                  </div>
+                  <span class="ml-auto text-xs text-neon-green font-mono">+5.1%</span>
+                </div>
+                <div class="font-mono font-bold text-xl">$3,542.18</div>
+                <canvas id="mini-chart-eth" width="200" height="50" class="mt-2"></canvas>
+              </div>
+            </div>
+
+            <!-- Token Card 3 - SOL -->
+            <div class="absolute bottom-8 right-16 animate-float-delay2 card-hover">
+              <div class="glass-light rounded-2xl p-5 w-48 glow-cyan">
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center">
+                    <span class="iconify text-white text-lg" data-icon="cryptocurrency:sol"></span>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-sm">Solana</div>
+                    <div class="text-xs text-zinc-500">SOL</div>
+                  </div>
+                </div>
+                <div class="font-mono font-bold text-lg">$178.45</div>
+              </div>
+            </div>
+
+            <!-- Portfolio Badge -->
+            <div class="absolute top-1/3 left-1/4 animate-orbit">
+              <div class="glass-light rounded-xl px-4 py-2.5 flex items-center gap-2">
+                <span class="iconify text-neon-green text-lg" data-icon="lucide:trending-up"></span>
+                <span class="text-sm font-mono font-medium text-neon-green">+24.5%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Chart Section -->
+    <section class="py-20 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-12">
+          <span class="text-xs font-medium uppercase tracking-widest text-neon-blue">Real-Time Data</span>
+          <h2 class="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Live Market Overview</h2>
+        </div>
+        <div class="glass-light rounded-2xl p-6 md:p-8 glow-blue">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                <span class="iconify text-white text-sm" data-icon="cryptocurrency:btc"></span>
+              </div>
+              <span class="font-semibold">BTC/USD</span>
+              <span class="font-mono text-xl font-bold">$67,842.30</span>
+              <span class="text-neon-green text-sm font-mono">+2.41%</span>
+            </div>
+            <div class="flex gap-2">
+              <button class="px-3 py-1 text-xs bg-neon-blue/20 text-neon-blue rounded-md font-medium">1D</button>
+              <button
+                class="px-3 py-1 text-xs text-zinc-500 hover:text-white rounded-md font-medium transition-colors">1W</button>
+              <button
+                class="px-3 py-1 text-xs text-zinc-500 hover:text-white rounded-md font-medium transition-colors">1M</button>
+              <button
+                class="px-3 py-1 text-xs text-zinc-500 hover:text-white rounded-md font-medium transition-colors">1Y</button>
+            </div>
+          </div>
+          <canvas id="main-chart" height="300" class="w-full"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trading Interface Preview -->
+    <section class="py-20 relative bg-surface-800/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <span class="text-xs font-medium uppercase tracking-widest text-neon-purple">Powerful Tools</span>
+            <h2 class="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Professional Trading<br>Interface</h2>
+            <p class="mt-4 text-zinc-400 font-light leading-relaxed">Advanced charting, real-time order books, and
+              lightning-fast execution. Trade like a pro with our institutional-grade tools.</p>
+            <div class="mt-8 space-y-4">
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-10 h-10 rounded-lg bg-neon-blue/10 border border-neon-blue/20 flex items-center justify-center flex-shrink-0">
+                  <span class="iconify text-neon-blue text-lg" data-icon="lucide:zap"></span>
+                </div>
+                <div>
+                  <div class="font-medium text-sm">Lightning Execution</div>
+                  <div class="text-xs text-zinc-500 mt-1">Sub-millisecond order execution with zero slippage</div>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-10 h-10 rounded-lg bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center flex-shrink-0">
+                  <span class="iconify text-neon-purple text-lg" data-icon="lucide:shield-check"></span>
+                </div>
+                <div>
+                  <div class="font-medium text-sm">Institutional Security</div>
+                  <div class="text-xs text-zinc-500 mt-1">Multi-sig cold storage with $500M insurance coverage</div>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-10 h-10 rounded-lg bg-neon-cyan/10 border border-neon-cyan/20 flex items-center justify-center flex-shrink-0">
+                  <span class="iconify text-neon-cyan text-lg" data-icon="lucide:brain"></span>
+                </div>
+                <div>
+                  <div class="font-medium text-sm">AI-Powered Analytics</div>
+                  <div class="text-xs text-zinc-500 mt-1">Machine learning models for market prediction</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trading UI Mock -->
+          <div class="glass-light rounded-2xl p-4 glow-purple">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="iconify text-orange-400" data-icon="cryptocurrency:btc"></span>
+                <span class="text-sm font-medium">BTC/USDT</span>
+              </div>
+              <div class="flex gap-1">
+                <button class="px-4 py-1.5 text-xs font-medium bg-neon-green/20 text-neon-green rounded">Buy</button>
+                <button
+                  class="px-4 py-1.5 text-xs font-medium text-zinc-500 hover:text-white rounded transition-colors">Sell</button>
+              </div>
+            </div>
+            <canvas id="trading-chart" height="200" class="w-full mb-3"></canvas>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-zinc-500 mb-1 block">Amount</label>
+                <input type="text" value="0.05 BTC"
+                  class="w-full bg-surface-900 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono">
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 mb-1 block">Price</label>
+                <input type="text" value="67,842.30"
+                  class="w-full bg-surface-900 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono">
+              </div>
+            </div>
+            <button
+              class="w-full mt-3 py-2.5 bg-gradient-to-r from-neon-green to-neon-cyan rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+              Buy Bitcoin — $3,392.12
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security Section -->
+    <section class="py-20 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-16">
+          <span class="text-xs font-medium uppercase tracking-widest text-neon-green">Bank-Grade Security</span>
+          <h2 class="mt-3 text-3xl md:text-4xl font-bold tracking-tight">Your Assets, Protected</h2>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="glass-light rounded-2xl p-6 card-hover group text-center">
+            <div
+              class="w-14 h-14 mx-auto rounded-xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-green text-2xl" data-icon="lucide:shield"></span>
+            </div>
+            <h3 class="font-semibold mb-2">Cold Storage</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed">98% of assets stored in air-gapped multi-sig cold wallets
+            </p>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group text-center">
+            <div
+              class="w-14 h-14 mx-auto rounded-xl bg-neon-blue/10 border border-neon-blue/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-blue text-2xl" data-icon="lucide:fingerprint"></span>
+            </div>
+            <h3 class="font-semibold mb-2">Biometric Auth</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed">Face ID, fingerprint, and hardware key support</p>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group text-center">
+            <div
+              class="w-14 h-14 mx-auto rounded-xl bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-purple text-2xl" data-icon="lucide:scan-eye"></span>
+            </div>
+            <h3 class="font-semibold mb-2">24/7 Monitoring</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed">AI-powered threat detection and real-time alerts</p>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group text-center">
+            <div
+              class="w-14 h-14 mx-auto rounded-xl bg-neon-orange/10 border border-neon-orange/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-orange text-2xl" data-icon="lucide:landmark"></span>
+            </div>
+            <h3 class="font-semibold mb-2">Regulated</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed">Licensed in 50+ jurisdictions with SOC 2 compliance</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Partner Logos -->
+    <section class="py-16 border-y border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <p class="text-center text-xs text-zinc-500 uppercase tracking-widest mb-8">Trusted by Industry Leaders</p>
+        <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+          <div class="flex items-center gap-2 text-zinc-600 hover:text-zinc-400 transition-colors"><span
+              class="iconify text-2xl" data-icon="simple-icons:google"></span><span class="font-semibold text-sm">Google
+              Cloud</span></div>
+          <div class="flex items-center gap-2 text-zinc-600 hover:text-zinc-400 transition-colors"><span
+              class="iconify text-2xl" data-icon="simple-icons:amazon"></span><span
+              class="font-semibold text-sm">AWS</span></div>
+          <div class="flex items-center gap-2 text-zinc-600 hover:text-zinc-400 transition-colors"><span
+              class="iconify text-2xl" data-icon="simple-icons:moonpay"></span><span
+              class="font-semibold text-sm">MoonPay</span></div>
+          <div class="flex items-center gap-2 text-zinc-600 hover:text-zinc-400 transition-colors"><span
+              class="iconify text-2xl" data-icon="simple-icons:chainlink"></span><span
+              class="font-semibold text-sm">Chainlink</span></div>
+          <div class="flex items-center gap-2 text-zinc-600 hover:text-zinc-400 transition-colors"><span
+              class="iconify text-2xl" data-icon="simple-icons:samsung"></span><span
+              class="font-semibold text-sm">Samsung</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile App Section -->
+    <section class="py-24 relative overflow-hidden">
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neon-purple/5 rounded-full blur-[100px]">
+      </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="text-center lg:text-left">
+            <span class="text-xs font-medium uppercase tracking-widest text-neon-cyan">Mobile App</span>
+            <h2 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight">Trade Anywhere,<br>Anytime</h2>
+            <p class="mt-4 text-zinc-400 font-light leading-relaxed max-w-md mx-auto lg:mx-0">Download the NexTrade app
+              and manage your portfolio on the go. Available on iOS and Android.</p>
+            <div class="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
+              <button
+                class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                <span class="iconify text-2xl" data-icon="lucide:smartphone"></span>
+                <div class="text-left">
+                  <div class="text-[10px] text-zinc-500">Download on</div>
+                  <div class="text-sm font-medium">App Store</div>
+                </div>
+              </button>
+              <button
+                class="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors">
+                <span class="iconify text-2xl" data-icon="lucide:play"></span>
+                <div class="text-left">
+                  <div class="text-[10px] text-zinc-500">Get it on</div>
+                  <div class="text-sm font-medium">Google Play</div>
+                </div>
+              </button>
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <div class="relative">
+              <div
+                class="w-[280px] h-[560px] rounded-[40px] border-2 border-white/10 bg-surface-700 overflow-hidden relative shadow-2xl">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-surface-900 rounded-b-2xl"></div>
+                <div class="p-6 pt-12">
+                  <div class="flex items-center justify-between mb-6">
+                    <span class="text-sm font-semibold">Portfolio</span>
+                    <span class="iconify text-zinc-500" data-icon="lucide:bell"></span>
+                  </div>
+                  <div class="text-3xl font-bold mb-1">$48,294.<span class="text-lg text-zinc-500">52</span></div>
+                  <div class="text-neon-green text-sm font-mono mb-6">+12.4% today</div>
+                  <canvas id="mobile-chart" width="230" height="100" class="mb-6"></canvas>
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                      <div
+                        class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                        <span class="iconify text-white text-xs" data-icon="cryptocurrency:btc"></span>
+                      </div>
+                      <div class="flex-1">
+                        <div class="text-xs font-medium">Bitcoin</div>
+                        <div class="text-[10px] text-zinc-500">0.45 BTC</div>
+                      </div>
+                      <div class="text-right">
+                        <div class="text-xs font-mono">$30,529</div>
+                        <div class="text-[10px] text-neon-green">+2.4%</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                      <div
+                        class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-blue-600 flex items-center justify-center">
+                        <span class="iconify text-white text-xs" data-icon="cryptocurrency:eth"></span>
+                      </div>
+                      <div class="flex-1">
+                        <div class="text-xs font-medium">Ethereum</div>
+                        <div class="text-[10px] text-zinc-500">3.2 ETH</div>
+                      </div>
+                      <div class="text-right">
+                        <div class="text-xs font-mono">$11,335</div>
+                        <div class="text-[10px] text-neon-green">+5.1%</div>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                      <div
+                        class="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center">
+                        <span class="iconify text-white text-xs" data-icon="cryptocurrency:sol"></span>
+                      </div>
+                      <div class="flex-1">
+                        <div class="text-xs font-medium">Solana</div>
+                        <div class="text-[10px] text-zinc-500">36 SOL</div>
+                      </div>
+                      <div class="text-right">
+                        <div class="text-xs font-mono">$6,424</div>
+                        <div class="text-[10px] text-red-400">-1.2%</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-neon-blue to-neon-purple rounded-full blur-xl opacity-40">
+              </div>
+              <div
+                class="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-br from-neon-cyan to-neon-green rounded-full blur-xl opacity-40">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== MARKETS PAGE ==================== -->
+  <div id="page-markets" class="page">
+    <section class="pt-28 pb-20 relative">
+      <div class="absolute top-0 right-1/4 w-[400px] h-[400px] bg-neon-blue/5 rounded-full blur-[100px]"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div class="mb-8">
+          <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Markets</h1>
+          <p class="mt-2 text-zinc-400 font-light">Track real-time prices of 500+ cryptocurrencies</p>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="flex flex-wrap gap-3 mb-6">
+          <div class="relative flex-1 min-w-[200px]">
+            <span class="iconify absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+              data-icon="lucide:search"></span>
+            <input id="market-search" type="text" placeholder="Search coins..."
+              class="w-full bg-surface-700 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm"
+              oninput="filterMarkets()">
+          </div>
+          <div class="flex gap-2">
+            <button
+              class="market-filter-btn active px-4 py-2 text-xs font-medium bg-neon-blue/20 text-neon-blue rounded-lg"
+              onclick="setMarketFilter(this,'all')">All</button>
+            <button
+              class="market-filter-btn px-4 py-2 text-xs font-medium text-zinc-500 hover:text-white rounded-lg transition-colors"
+              onclick="setMarketFilter(this,'gainers')">🔥 Gainers</button>
+            <button
+              class="market-filter-btn px-4 py-2 text-xs font-medium text-zinc-500 hover:text-white rounded-lg transition-colors"
+              onclick="setMarketFilter(this,'losers')">📉 Losers</button>
+            <button
+              class="market-filter-btn px-4 py-2 text-xs font-medium text-zinc-500 hover:text-white rounded-lg transition-colors"
+              onclick="setMarketFilter(this,'defi')">DeFi</button>
+          </div>
+        </div>
+
+        <!-- Market Table -->
+        <div class="glass-light rounded-2xl overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-white/5">
+                  <th class="text-left px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">#</th>
+                  <th class="text-left px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Asset</th>
+                  <th class="text-right px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Price</th>
+                  <th class="text-right px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">24h Change
+                  </th>
+                  <th
+                    class="text-right px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider hidden md:table-cell">
+                    Market Cap</th>
+                  <th
+                    class="text-right px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider hidden lg:table-cell">
+                    Volume</th>
+                  <th
+                    class="text-center px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider hidden sm:table-cell">
+                    7D Chart</th>
+                  <th class="text-center px-6 py-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="market-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== WALLET / DASHBOARD PAGE ==================== -->
+  <div id="page-wallet" class="page">
+    <section class="pt-28 pb-20 relative">
+      <div class="absolute top-0 left-1/3 w-[500px] h-[500px] bg-neon-purple/5 rounded-full blur-[120px]"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Dashboard</h1>
+            <p class="mt-2 text-zinc-400 font-light">Welcome back, Alex</p>
+          </div>
+          <button onclick="navigateTo('exchange')"
+            class="px-5 py-2.5 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2">
+            <span class="iconify" data-icon="lucide:plus"></span> New Trade
+          </button>
+        </div>
+
+        <!-- Portfolio Cards -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div class="glass-light rounded-2xl p-5 card-hover glow-blue">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs text-zinc-500">Total Balance</span>
+              <span class="iconify text-neon-blue" data-icon="lucide:wallet"></span>
+            </div>
+            <div class="text-2xl font-bold font-mono">$48,294.<span class="text-zinc-500">52</span></div>
+            <div class="flex items-center gap-1 mt-2">
+              <span class="iconify text-neon-green text-sm" data-icon="lucide:trending-up"></span>
+              <span class="text-xs text-neon-green font-mono">+12.4%</span>
+              <span class="text-xs text-zinc-500 ml-1">24h</span>
+            </div>
+          </div>
+          <div class="glass-light rounded-2xl p-5 card-hover glow-green">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs text-zinc-500">Today's P&L</span>
+              <span class="iconify text-neon-green" data-icon="lucide:dollar-sign"></span>
+            </div>
+            <div class="text-2xl font-bold font-mono text-neon-green">+$5,321.<span class="text-neon-green/50">80</span>
+            </div>
+            <div class="flex items-center gap-1 mt-2">
+              <span class="text-xs text-zinc-500">Best performing day this month</span>
+            </div>
+          </div>
+          <div class="glass-light rounded-2xl p-5 card-hover glow-purple">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs text-zinc-500">Active Positions</span>
+              <span class="iconify text-neon-purple" data-icon="lucide:layers"></span>
+            </div>
+            <div class="text-2xl font-bold font-mono">12</div>
+            <div class="flex items-center gap-1 mt-2">
+              <span class="text-xs text-zinc-500">Across 4 exchanges</span>
+            </div>
+          </div>
+          <div class="glass-light rounded-2xl p-5 card-hover glow-cyan">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs text-zinc-500">Staking Rewards</span>
+              <span class="iconify text-neon-cyan" data-icon="lucide:gem"></span>
+            </div>
+            <div class="text-2xl font-bold font-mono">$1,842.<span class="text-zinc-500">15</span></div>
+            <div class="flex items-center gap-1 mt-2">
+              <span class="text-xs text-neon-cyan font-mono">APY 8.2%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6 mb-8">
+          <!-- Analytics Chart -->
+          <div class="lg:col-span-2 glass-light rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-semibold">Portfolio Performance</h3>
+              <div class="flex gap-2">
+                <button class="px-3 py-1 text-xs bg-neon-blue/20 text-neon-blue rounded-md font-medium">1M</button>
+                <button
+                  class="px-3 py-1 text-xs text-zinc-500 hover:text-white rounded-md font-medium transition-colors">3M</button>
+                <button
+                  class="px-3 py-1 text-xs text-zinc-500 hover:text-white rounded-md font-medium transition-colors">1Y</button>
+                <button
+                  class="px-3 py-1 text-xs text-zinc-500 hover:text-white rounded-md font-medium transition-colors">All</button>
+              </div>
+            </div>
+            <canvas id="portfolio-chart" height="250" class="w-full"></canvas>
+          </div>
+
+          <!-- Token Watchlist -->
+          <div class="glass-light rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold">Watchlist</h3>
+              <button class="text-xs text-neon-blue hover:underline">Edit</button>
+            </div>
+            <div class="space-y-3" id="watchlist"></div>
+          </div>
+        </div>
+
+        <!-- Transaction Table -->
+        <div class="glass-light rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="font-semibold">Recent Transactions</h3>
+            <button class="text-xs text-neon-blue hover:underline">View All</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-white/5">
+                  <th class="text-left pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">Type</th>
+                  <th class="text-left pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">Asset</th>
+                  <th class="text-right pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">Amount</th>
+                  <th
+                    class="text-right pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider hidden sm:table-cell">
+                    Value</th>
+                  <th
+                    class="text-right pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider hidden md:table-cell">
+                    Date</th>
+                  <th class="text-right pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody id="transaction-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== EXCHANGE PAGE ==================== -->
+  <div id="page-exchange" class="page">
+    <section class="pt-28 pb-20 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="mb-6">
+          <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Exchange</h1>
+        </div>
+
+        <div class="grid lg:grid-cols-4 gap-4">
+          <!-- Order Book -->
+          <div class="glass-light rounded-2xl p-4 lg:col-span-1">
+            <h3 class="text-sm font-semibold mb-3">Order Book</h3>
+            <div class="space-y-0.5" id="order-book-sells"></div>
+            <div class="py-2 text-center font-mono font-bold text-lg border-y border-white/5 my-2"
+              id="order-book-price">$67,842.30</div>
+            <div class="space-y-0.5" id="order-book-buys"></div>
+          </div>
+
+          <!-- Chart Area -->
+          <div class="glass-light rounded-2xl p-4 lg:col-span-2">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="iconify text-orange-400" data-icon="cryptocurrency:btc"></span>
+                <span class="text-sm font-semibold">BTC/USDT</span>
+                <span class="font-mono text-sm font-bold">67,842.30</span>
+                <span class="text-neon-green text-xs font-mono">+2.41%</span>
+              </div>
+              <div class="flex gap-1">
+                <button class="px-2 py-1 text-[10px] text-zinc-500 hover:text-white transition-colors">1m</button>
+                <button class="px-2 py-1 text-[10px] text-zinc-500 hover:text-white transition-colors">5m</button>
+                <button class="px-2 py-1 text-[10px] bg-neon-blue/20 text-neon-blue rounded">1h</button>
+                <button class="px-2 py-1 text-[10px] text-zinc-500 hover:text-white transition-colors">4h</button>
+                <button class="px-2 py-1 text-[10px] text-zinc-500 hover:text-white transition-colors">1D</button>
+              </div>
+            </div>
+            <canvas id="exchange-chart" height="350" class="w-full"></canvas>
+          </div>
+
+          <!-- Trade Panel -->
+          <div class="glass-light rounded-2xl p-4 lg:col-span-1">
+            <div class="flex gap-1 mb-4">
+              <button id="buy-btn" class="flex-1 py-2 text-sm font-medium bg-neon-green/20 text-neon-green rounded-lg"
+                onclick="setTradeType('buy')">Buy</button>
+              <button id="sell-btn" class="flex-1 py-2 text-sm font-medium text-zinc-500 rounded-lg"
+                onclick="setTradeType('sell')">Sell</button>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs text-zinc-500 mb-1 block">Order Type</label>
+                <select class="w-full bg-surface-700 border border-white/10 rounded-lg px-3 py-2 text-sm">
+                  <option>Limit</option>
+                  <option>Market</option>
+                  <option>Stop Limit</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 mb-1 block">Price (USDT)</label>
+                <input type="text" value="67,842.30"
+                  class="w-full bg-surface-700 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono">
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 mb-1 block">Amount (BTC)</label>
+                <input id="trade-amount" type="text" value="0.00"
+                  class="w-full bg-surface-700 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono"
+                  oninput="updateTradeTotal()">
+              </div>
+              <div class="flex gap-2">
+                <button
+                  class="flex-1 py-1 text-[10px] text-zinc-500 hover:text-white border border-white/10 rounded transition-colors"
+                  onclick="setTradePercent(25)">25%</button>
+                <button
+                  class="flex-1 py-1 text-[10px] text-zinc-500 hover:text-white border border-white/10 rounded transition-colors"
+                  onclick="setTradePercent(50)">50%</button>
+                <button
+                  class="flex-1 py-1 text-[10px] text-zinc-500 hover:text-white border border-white/10 rounded transition-colors"
+                  onclick="setTradePercent(75)">75%</button>
+                <button
+                  class="flex-1 py-1 text-[10px] text-zinc-500 hover:text-white border border-white/10 rounded transition-colors"
+                  onclick="setTradePercent(100)">100%</button>
+              </div>
+              <div class="pt-3 border-t border-white/5">
+                <div class="flex justify-between text-xs mb-1"><span class="text-zinc-500">Total</span><span
+                    class="font-mono" id="trade-total">$0.00</span></div>
+                <div class="flex justify-between text-xs mb-1"><span class="text-zinc-500">Fee (0.1%)</span><span
+                    class="font-mono" id="trade-fee">$0.00</span></div>
+              </div>
+              <button id="trade-submit-btn"
+                class="w-full py-3 bg-gradient-to-r from-neon-green to-neon-cyan rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
+                onclick="executeTrade()">
+                Buy BTC
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Market Trades -->
+        <div class="glass-light rounded-2xl p-4 mt-4">
+          <h3 class="text-sm font-semibold mb-3">Market Trades</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-white/5">
+                  <th class="text-left pb-2 text-[10px] text-zinc-500 uppercase">Price</th>
+                  <th class="text-right pb-2 text-[10px] text-zinc-500 uppercase">Amount</th>
+                  <th class="text-right pb-2 text-[10px] text-zinc-500 uppercase">Total</th>
+                  <th class="text-right pb-2 text-[10px] text-zinc-500 uppercase hidden sm:table-cell">Time</th>
+                </tr>
+              </thead>
+              <tbody id="market-trades" class="font-mono text-xs"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== LEARN PAGE ==================== -->
+  <div id="page-learn" class="page">
+    <section class="pt-28 pb-20 relative">
+      <div class="absolute top-0 right-1/3 w-[400px] h-[400px] bg-neon-cyan/5 rounded-full blur-[120px]"></div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        <div class="mb-12">
+          <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Learn</h1>
+          <p class="mt-2 text-zinc-400 font-light">Master crypto with curated guides, tutorials, and insights</p>
+        </div>
+
+        <!-- Featured -->
+        <div class="glass-light rounded-2xl overflow-hidden mb-12 card-hover">
+          <div class="grid md:grid-cols-2">
+            <div
+              class="aspect-video md:aspect-auto bg-gradient-to-br from-neon-blue/20 to-neon-purple/20 flex items-center justify-center relative">
+              <div class="absolute inset-0 bg-grid opacity-30"></div>
+              <span class="iconify text-6xl text-white/20 relative z-10" data-icon="lucide:play-circle"></span>
+            </div>
+            <div class="p-8">
+              <div class="inline-flex px-3 py-1 bg-neon-blue/20 text-neon-blue rounded-full text-xs font-medium mb-4">
+                Featured Course</div>
+              <h2 class="text-2xl font-bold tracking-tight mb-3">Blockchain Fundamentals: From Zero to Hero</h2>
+              <p class="text-zinc-400 font-light text-sm leading-relaxed mb-4">A comprehensive 12-module course covering
+                everything from blockchain basics to advanced DeFi strategies.</p>
+              <div class="flex items-center gap-4 text-xs text-zinc-500 mb-6">
+                <span class="flex items-center gap-1"><span class="iconify" data-icon="lucide:clock"></span> 6
+                  hours</span>
+                <span class="flex items-center gap-1"><span class="iconify" data-icon="lucide:book-open"></span> 12
+                  modules</span>
+                <span class="flex items-center gap-1"><span class="iconify" data-icon="lucide:users"></span> 24k
+                  enrolled</span>
+              </div>
+              <button
+                class="px-6 py-2.5 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Start
+                Learning</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="glass-light rounded-2xl p-6 card-hover group cursor-pointer">
+            <div
+              class="w-12 h-12 rounded-xl bg-neon-blue/10 border border-neon-blue/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-blue text-xl" data-icon="lucide:blocks"></span>
+            </div>
+            <h3 class="font-semibold mb-2">Blockchain Basics</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed mb-3">Understand the fundamentals of distributed ledger
+              technology</p>
+            <span class="text-xs text-neon-blue font-medium">8 articles →</span>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group cursor-pointer">
+            <div
+              class="w-12 h-12 rounded-xl bg-neon-purple/10 border border-neon-purple/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-purple text-xl" data-icon="lucide:coins"></span>
+            </div>
+            <h3 class="font-semibold mb-2">DeFi Deep Dives</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed mb-3">Explore lending, borrowing, yield farming, and more
+            </p>
+            <span class="text-xs text-neon-purple font-medium">12 articles →</span>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group cursor-pointer">
+            <div
+              class="w-12 h-12 rounded-xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-green text-xl" data-icon="lucide:shield-check"></span>
+            </div>
+            <h3 class="font-semibold mb-2">Security & Safety</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed mb-3">Protect yourself from scams and secure your assets</p>
+            <span class="text-xs text-neon-green font-medium">6 articles →</span>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group cursor-pointer">
+            <div
+              class="w-12 h-12 rounded-xl bg-neon-cyan/10 border border-neon-cyan/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-cyan text-xl" data-icon="lucide:bar-chart-2"></span>
+            </div>
+            <h3 class="font-semibold mb-2">Trading Strategies</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed mb-3">Technical analysis, risk management, and pro tips</p>
+            <span class="text-xs text-neon-cyan font-medium">10 articles →</span>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group cursor-pointer">
+            <div
+              class="w-12 h-12 rounded-xl bg-neon-orange/10 border border-neon-orange/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-orange text-xl" data-icon="lucide:palette"></span>
+            </div>
+            <h3 class="font-semibold mb-2">NFTs & Web3</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed mb-3">Digital art, gaming, metaverse, and creator economy
+            </p>
+            <span class="text-xs text-neon-orange font-medium">7 articles →</span>
+          </div>
+          <div class="glass-light rounded-2xl p-6 card-hover group cursor-pointer">
+            <div
+              class="w-12 h-12 rounded-xl bg-neon-pink/10 border border-neon-pink/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <span class="iconify text-neon-pink text-xl" data-icon="lucide:vote"></span>
+            </div>
+            <h3 class="font-semibold mb-2">Governance & DAOs</h3>
+            <p class="text-xs text-zinc-500 leading-relaxed mb-3">Decentralized governance and community ownership</p>
+            <span class="text-xs text-neon-pink font-medium">5 articles →</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== PRICING PAGE ==================== -->
+  <div id="page-pricing" class="page">
+    <section class="pt-28 pb-20 relative">
+      <div class="absolute top-0 left-1/2 w-[500px] h-[500px] bg-neon-purple/5 rounded-full blur-[120px]"></div>
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 relative z-10">
+        <div class="text-center mb-12">
+          <span class="text-xs font-medium uppercase tracking-widest text-neon-purple">Simple Pricing</span>
+          <h1 class="mt-3 text-3xl md:text-5xl font-bold tracking-tight">Choose Your Plan</h1>
+          <p class="mt-4 text-zinc-400 font-light max-w-xl mx-auto">Start free and scale as you grow. No hidden fees, no
+            surprises.</p>
+
+          <div class="mt-6 inline-flex items-center bg-surface-700 rounded-lg p-1">
+            <button id="monthly-btn" class="px-4 py-2 text-sm font-medium bg-neon-blue/20 text-neon-blue rounded-md"
+              onclick="setPricingCycle('monthly')">Monthly</button>
+            <button id="yearly-btn" class="px-4 py-2 text-sm font-medium text-zinc-500 rounded-md"
+              onclick="setPricingCycle('yearly')">Yearly <span class="text-neon-green text-xs">-20%</span></button>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <!-- Free -->
+          <div class="glass-light rounded-2xl p-8 card-hover">
+            <div class="text-sm font-medium text-zinc-400 mb-2">Starter</div>
+            <div class="flex items-baseline gap-1 mb-1">
+              <span class="text-4xl font-bold">$0</span>
+              <span class="text-zinc-500 text-sm">/month</span>
+            </div>
+            <p class="text-xs text-zinc-500 mb-6">Perfect for getting started</p>
+            <button
+              class="w-full py-2.5 border border-white/10 rounded-xl text-sm font-medium hover:bg-white/5 transition-colors mb-6"
+              onclick="navigateTo('signup')">Get Started</button>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Up to $1,000 monthly volume</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Basic charting tools</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>5 watchlist tokens</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Email support</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-500"><span class="iconify text-zinc-600"
+                  data-icon="lucide:x"></span>Advanced order types</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-500"><span class="iconify text-zinc-600"
+                  data-icon="lucide:x"></span>API access</li>
+            </ul>
+          </div>
+
+          <!-- Pro -->
+          <div class="relative glass-light rounded-2xl p-8 card-hover border border-neon-blue/30 glow-blue">
+            <div
+              class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-full text-xs font-medium">
+              Most Popular</div>
+            <div class="text-sm font-medium text-neon-blue mb-2">Pro</div>
+            <div class="flex items-baseline gap-1 mb-1">
+              <span class="text-4xl font-bold pricing-amount" data-monthly="29" data-yearly="23">$29</span>
+              <span class="text-zinc-500 text-sm">/month</span>
+            </div>
+            <p class="text-xs text-zinc-500 mb-6">For active traders</p>
+            <button
+              class="w-full py-2.5 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-sm font-medium hover:opacity-90 transition-opacity mb-6"
+              onclick="navigateTo('signup')">Start Free Trial</button>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Unlimited trading volume</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Advanced charting + indicators</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Unlimited watchlists</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Priority support</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Advanced order types</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>API access (1000 req/min)</li>
+            </ul>
+          </div>
+
+          <!-- Enterprise -->
+          <div class="glass-light rounded-2xl p-8 card-hover">
+            <div class="text-sm font-medium text-neon-purple mb-2">Enterprise</div>
+            <div class="flex items-baseline gap-1 mb-1">
+              <span class="text-4xl font-bold pricing-amount" data-monthly="99" data-yearly="79">$99</span>
+              <span class="text-zinc-500 text-sm">/month</span>
+            </div>
+            <p class="text-xs text-zinc-500 mb-6">For institutions & teams</p>
+            <button
+              class="w-full py-2.5 border border-white/10 rounded-xl text-sm font-medium hover:bg-white/5 transition-colors mb-6"
+              onclick="showToast('Our team will contact you shortly!','info')">Contact Sales</button>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Everything in Pro</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Multi-user access</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Unlimited API (10k req/min)</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Dedicated account manager</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>Custom reporting</li>
+              <li class="flex items-center gap-2 text-sm text-zinc-300"><span class="iconify text-neon-green"
+                  data-icon="lucide:check"></span>SLA guarantee</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== LOGIN PAGE ==================== -->
+  <div id="page-login" class="page">
+    <section class="pt-28 pb-20 min-h-screen flex items-center relative">
+      <div class="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-neon-blue/5 rounded-full blur-[120px]"></div>
+      <div class="max-w-md mx-auto px-4 w-full relative z-10">
+        <div class="text-center mb-8">
+          <div
+            class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center mb-4 animate-gradient">
+            <span class="iconify text-white text-xl" data-icon="lucide:hexagon"></span>
+          </div>
+          <h1 class="text-2xl font-bold">Welcome Back</h1>
+          <p class="mt-2 text-sm text-zinc-400">Log in to your NexTrade account</p>
+        </div>
+
+        <div class="glass-light rounded-2xl p-8">
+          <form onsubmit="handleLogin(event)">
+            <div class="space-y-4">
+              <div>
+                <label class="text-xs text-zinc-500 mb-1.5 block">Email</label>
+                <input type="email" id="login-email" placeholder="alex@example.com"
+                  class="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-neon-blue/50 transition-colors"
+                  required>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 mb-1.5 block">Password</label>
+                <div class="relative">
+                  <input type="password" id="login-password" placeholder="••••••••"
+                    class="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-neon-blue/50 transition-colors pr-10"
+                    required>
+                  <button type="button"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                    onclick="togglePassword('login-password')">
+                    <span class="iconify" data-icon="lucide:eye"></span>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 text-xs text-zinc-400 cursor-pointer">
+                  <input type="checkbox" class="w-3.5 h-3.5 rounded border-white/20 bg-surface-700 accent-neon-blue">
+                  Remember me
+                </label>
+                <a href="#" class="text-xs text-neon-blue hover:underline">Forgot password?</a>
+              </div>
+              <button type="submit"
+                class="w-full py-3 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Log
+                In</button>
+            </div>
+          </form>
+
+          <div class="my-6 flex items-center gap-4">
+            <div class="flex-1 h-px bg-white/10"></div>
+            <span class="text-xs text-zinc-500">or continue with</span>
+            <div class="flex-1 h-px bg-white/10"></div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <button
+              class="flex items-center justify-center gap-2 py-2.5 bg-surface-700 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+              <span class="iconify text-lg" data-icon="lucide:chrome"></span>
+            </button>
+            <button
+              class="flex items-center justify-center gap-2 py-2.5 bg-surface-700 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+              <span class="iconify text-lg" data-icon="lucide:apple"></span>
+            </button>
+            <button
+              class="flex items-center justify-center gap-2 py-2.5 bg-surface-700 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+              <span class="iconify text-lg" data-icon="simple-icons:metamask"></span>
+            </button>
+          </div>
+
+          <p class="text-center text-xs text-zinc-500 mt-6">
+            Don't have an account? <button onclick="navigateTo('signup')" class="text-neon-blue hover:underline">Sign
+              up</button>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== SIGNUP PAGE ==================== -->
+  <div id="page-signup" class="page">
+    <section class="pt-28 pb-20 min-h-screen flex items-center relative">
+      <div class="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-neon-purple/5 rounded-full blur-[120px]"></div>
+      <div class="max-w-md mx-auto px-4 w-full relative z-10">
+        <div class="text-center mb-8">
+          <div
+            class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center mb-4 animate-gradient">
+            <span class="iconify text-white text-xl" data-icon="lucide:hexagon"></span>
+          </div>
+          <h1 class="text-2xl font-bold">Create Account</h1>
+          <p class="mt-2 text-sm text-zinc-400">Start your crypto journey today</p>
+        </div>
+
+        <div class="glass-light rounded-2xl p-8">
+          <form onsubmit="handleSignup(event)">
+            <div class="space-y-4">
+              <div>
+                <label class="text-xs text-zinc-500 mb-1.5 block">Full Name</label>
+                <input type="text" id="signup-name" placeholder="Alex Johnson"
+                  class="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-neon-blue/50 transition-colors"
+                  required>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 mb-1.5 block">Email</label>
+                <input type="email" id="signup-email" placeholder="alex@example.com"
+                  class="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-neon-blue/50 transition-colors"
+                  required>
+              </div>
+              <div>
+                <label class="text-xs text-zinc-500 mb-1.5 block">Password</label>
+                <div class="relative">
+                  <input type="password" id="signup-password" placeholder="Min 8 characters"
+                    class="w-full bg-surface-700 border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-neon-blue/50 transition-colors pr-10"
+                    required minlength="8">
+                  <button type="button"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
+                    onclick="togglePassword('signup-password')">
+                    <span class="iconify" data-icon="lucide:eye"></span>
+                  </button>
+                </div>
+                <div class="mt-2 flex gap-1">
+                  <div id="str-1" class="h-1 flex-1 rounded bg-white/10"></div>
+                  <div id="str-2" class="h-1 flex-1 rounded bg-white/10"></div>
+                  <div id="str-3" class="h-1 flex-1 rounded bg-white/10"></div>
+                  <div id="str-4" class="h-1 flex-1 rounded bg-white/10"></div>
+                </div>
+              </div>
+              <label class="flex items-start gap-2 text-xs text-zinc-400 cursor-pointer">
+                <input type="checkbox"
+                  class="w-3.5 h-3.5 mt-0.5 rounded border-white/20 bg-surface-700 accent-neon-blue" required>
+                I agree to the <a href="#" class="text-neon-blue hover:underline">Terms of Service</a> and <a href="#"
+                  class="text-neon-blue hover:underline">Privacy Policy</a>
+              </label>
+              <button type="submit"
+                class="w-full py-3 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Create
+                Account</button>
+            </div>
+          </form>
+
+          <div class="my-6 flex items-center gap-4">
+            <div class="flex-1 h-px bg-white/10"></div>
+            <span class="text-xs text-zinc-500">or sign up with</span>
+            <div class="flex-1 h-px bg-white/10"></div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <button
+              class="flex items-center justify-center gap-2 py-2.5 bg-surface-700 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+              <span class="iconify text-lg" data-icon="lucide:chrome"></span>
+            </button>
+            <button
+              class="flex items-center justify-center gap-2 py-2.5 bg-surface-700 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+              <span class="iconify text-lg" data-icon="lucide:apple"></span>
+            </button>
+            <button
+              class="flex items-center justify-center gap-2 py-2.5 bg-surface-700 border border-white/10 rounded-xl hover:bg-white/5 transition-colors">
+              <span class="iconify text-lg" data-icon="simple-icons:metamask"></span>
+            </button>
+          </div>
+
+          <p class="text-center text-xs text-zinc-500 mt-6">
+            Already have an account? <button onclick="navigateTo('login')" class="text-neon-blue hover:underline">Log
+              in</button>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-white/5 bg-surface-900 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <div
+              class="w-7 h-7 rounded-md bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center">
+              <span class="iconify text-white text-sm" data-icon="lucide:hexagon"></span>
+            </div>
+            <span class="text-sm font-bold">NexTrade</span>
+          </div>
+          <p class="text-xs text-zinc-500 leading-relaxed">The next-generation crypto trading platform for everyone.</p>
+          <div class="flex gap-3 mt-4">
+            <a href="#"
+              class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/10 transition-all"><span
+                class="iconify text-sm" data-icon="lucide:twitter"></span></a>
+            <a href="#"
+              class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/10 transition-all"><span
+                class="iconify text-sm" data-icon="lucide:github"></span></a>
+            <a href="#"
+              class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/10 transition-all"><span
+                class="iconify text-sm" data-icon="lucide:message-circle"></span></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-4">Products</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Exchange</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Wallet</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">DeFi</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">NFT</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-4">Resources</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Learn</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Blog</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">API Docs</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Status</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-4">Company</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">About</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Careers</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Security</a></li>
+            <li><a href="#" class="text-xs text-zinc-500 hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-12 pt-8 border-t border-white/5 flex flex-wrap justify-between items-center gap-4">
+        <p class="text-xs text-zinc-600">© 2025 NexTrade. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="#" class="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Privacy</a>
+          <a href="#" class="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Terms</a>
+          <a href="#" class="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ==================== DATA ====================
+    const cryptoData = [
+      { rank: 1, symbol: 'BTC', name: 'Bitcoin', icon: 'cryptocurrency:btc', color: 'from-orange-400 to-orange-600', price: 67842.30, change: 2.41, mcap: '1.33T', vol: '28.4B', category: 'all' },
+      { rank: 2, symbol: 'ETH', name: 'Ethereum', icon: 'cryptocurrency:eth', color: 'from-purple-400 to-blue-600', price: 3542.18, change: 5.12, mcap: '425.1B', vol: '14.2B', category: 'all' },
+      { rank: 3, symbol: 'BNB', name: 'BNB', icon: 'cryptocurrency:bnb', color: 'from-yellow-400 to-yellow-600', price: 598.42, change: -0.83, mcap: '89.2B', vol: '1.8B', category: 'all' },
+      { rank: 4, symbol: 'SOL', name: 'Solana', icon: 'cryptocurrency:sol', color: 'from-cyan-400 to-purple-600', price: 178.45, change: 8.24, mcap: '78.5B', vol: '3.2B', category: 'all' },
+      { rank: 5, symbol: 'XRP', name: 'Ripple', icon: 'cryptocurrency:xrp', color: 'from-gray-300 to-gray-500', price: 0.6234, change: -1.52, mcap: '34.1B', vol: '1.1B', category: 'all' },
+      { rank: 6, symbol: 'ADA', name: 'Cardano', icon: 'cryptocurrency:ada', color: 'from-blue-400 to-blue-600', price: 0.4821, change: 3.67, mcap: '17.2B', vol: '520M', category: 'all' },
+      { rank: 7, symbol: 'AVAX', name: 'Avalanche', icon: 'cryptocurrency:avax', color: 'from-red-400 to-red-600', price: 38.92, change: 12.34, mcap: '14.8B', vol: '890M', category: 'defi' },
+      { rank: 8, symbol: 'DOT', name: 'Polkadot', icon: 'cryptocurrency:dot', color: 'from-pink-400 to-pink-600', price: 7.34, change: -2.18, mcap: '10.2B', vol: '340M', category: 'all' },
+      { rank: 9, symbol: 'LINK', name: 'Chainlink', icon: 'cryptocurrency:link', color: 'from-blue-300 to-blue-500', price: 18.56, change: 6.89, mcap: '10.8B', vol: '780M', category: 'defi' },
+      { rank: 10, symbol: 'UNI', name: 'Uniswap', icon: 'cryptocurrency:uni', color: 'from-pink-400 to-purple-600', price: 12.34, change: -3.45, mcap: '7.4B', vol: '290M', category: 'defi' },
+      { rank: 11, symbol: 'MATIC', name: 'Polygon', icon: 'cryptocurrency:matic', color: 'from-purple-400 to-purple-600', price: 0.7123, change: 4.56, mcap: '6.6B', vol: '410M', category: 'defi' },
+      { rank: 12, symbol: 'ATOM', name: 'Cosmos', icon: 'cryptocurrency:atom', color: 'from-purple-300 to-indigo-600', price: 9.87, change: -1.23, mcap: '3.8B', vol: '180M', category: 'all' },
+    ];
+
+    const transactions = [
+      { type: 'Buy', asset: 'Bitcoin', symbol: 'BTC', amount: '+0.125 BTC', value: '$8,480.29', date: 'Dec 15, 2024', status: 'Completed', statusColor: 'text-neon-green' },
+      { type: 'Sell', asset: 'Ethereum', symbol: 'ETH', amount: '-2.5 ETH', value: '$8,855.45', date: 'Dec 14, 2024', status: 'Completed', statusColor: 'text-neon-green' },
+      { type: 'Stake', asset: 'Solana', symbol: 'SOL', amount: '50 SOL', value: '$8,922.50', date: 'Dec 13, 2024', status: 'Earning', statusColor: 'text-neon-cyan' },
+      { type: 'Buy', asset: 'Chainlink', symbol: 'LINK', amount: '+200 LINK', value: '$3,712.00', date: 'Dec 12, 2024', status: 'Completed', statusColor: 'text-neon-green' },
+      { type: 'Transfer', asset: 'USDT', symbol: 'USDT', amount: '5,000 USDT', value: '$5,000.00', date: 'Dec 11, 2024', status: 'Pending', statusColor: 'text-neon-orange' },
+    ];
+
+    // ==================== NAVIGATION ====================
+    function navigateTo(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      document.querySelector(`[data-nav="${page}"]`)?.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (page === 'markets') renderMarkets();
+      if (page === 'wallet') { renderDashboard(); drawPortfolioChart(); }
+      if (page === 'exchange') { drawExchangeChart(); renderOrderBook(); renderMarketTrades(); }
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    }
+
+    // ==================== TOAST ====================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const icons = { success: 'lucide:check-circle', error: 'lucide:x-circle', info: 'lucide:info' };
+      const colors = { success: 'text-neon-green', error: 'text-red-400', info: 'text-neon-blue' };
+      toast.className = 'toast glass-light rounded-xl px-4 py-3 flex items-center gap-3 min-w-[280px]';
+      toast.innerHTML = `<span class="iconify ${colors[type]} text-lg" data-icon="${icons[type]}"></span><span class="text-sm">${message}</span>`;
+      container.appendChild(toast);
+      requestAnimationFrame(() => toast.classList.add('show'));
+      setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
+    }
+
+    // ==================== CHARTS ====================
+    function generateChartData(points, base, volatility, trend) {
+      const data = [];
+      let value = base;
+      for (let i = 0; i < points; i++) {
+        value += (Math.random() - 0.48 + trend * 0.01) * volatility;
+        value = Math.max(value * 0.95, value);
+        data.push(value);
+      }
+      return data;
+    }
+
+    function drawLineChart(canvasId, data, color1, color2, showGrid = true) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      const w = rect.width, h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const min = Math.min(...data) * 0.998;
+      const max = Math.max(...data) * 1.002;
+      const range = max - min;
+
+      if (showGrid) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 5; i++) {
+          const y = (h / 4) * i;
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        }
+      }
+
+      // Gradient fill
+      const gradient = ctx.createLinearGradient(0, 0, 0, h);
+      gradient.addColorStop(0, color1 + '30');
+      gradient.addColorStop(1, color1 + '00');
+
+      ctx.beginPath();
+      data.forEach((val, i) => {
+        const x = (i / (data.length - 1)) * w;
+        const y = h - ((val - min) / range) * h;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+      ctx.fillStyle = gradient; ctx.fill();
+
+      // Line
+      ctx.beginPath();
+      data.forEach((val, i) => {
+        const x = (i / (data.length - 1)) * w;
+        const y = h - ((val - min) / range) * h;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      const lineGrad = ctx.createLinearGradient(0, 0, w, 0);
+      lineGrad.addColorStop(0, color1);
+      lineGrad.addColorStop(1, color2 || color1);
+      ctx.strokeStyle = lineGrad;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Glow dot at end
+      const lastX = w;
+      const lastY = h - ((data[data.length - 1] - min) / range) * h;
+      ctx.beginPath(); ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = color1; ctx.fill();
+      ctx.beginPath(); ctx.arc(lastX, lastY, 8, 0, Math.PI * 2);
+      ctx.fillStyle = color1 + '30'; ctx.fill();
+    }
+
+    function drawMiniChart(canvasId, trend) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      ctx.scale(dpr, dpr);
+      const w = canvas.offsetWidth, h = canvas.offsetHeight;
+      const data = generateChartData(20, 50, 5, trend);
+      const min = Math.min(...data), max = Math.max(...data), range = max - min;
+
+      ctx.beginPath();
+      data.forEach((val, i) => {
+        const x = (i / (data.length - 1)) * w;
+        const y = h - ((val - min) / range) * h;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = trend > 0 ? '#10b981' : '#ef4444';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // ==================== MARKET PAGE ====================
+    let currentMarketFilter = 'all';
+
+    function renderMarkets() {
+      const body = document.getElementById('market-table-body');
+      if (!body) return;
+      let filtered = cryptoData;
+      const search = document.getElementById('market-search')?.value.toLowerCase() || '';
+      if (search) filtered = filtered.filter(c => c.name.toLowerCase().includes(search) || c.symbol.toLowerCase().includes(search));
+      if (currentMarketFilter === 'gainers') filtered = filtered.filter(c => c.change > 0);
+      if (currentMarketFilter === 'losers') filtered = filtered.filter(c => c.change < 0);
+      if (currentMarketFilter === 'defi') filtered = filtered.filter(c => c.category === 'defi');
+
+      body.innerHTML = filtered.map(c => {
+        const isUp = c.change >= 0;
+        return `<tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer" onclick="navigateTo('exchange')">
+      <td class="px-6 py-4 text-sm text-zinc-500">${c.rank}</td>
+      <td class="px-6 py-4"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-gradient-to-br ${c.color} flex items-center justify-center"><span class="iconify text-white text-sm" data-icon="${c.icon}"></span></div><div><div class="text-sm font-medium">${c.name}</div><div class="text-xs text-zinc-500">${c.symbol}</div></div></div></td>
+      <td class="px-6 py-4 text-right font-mono text-sm">$${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td class="px-6 py-4 text-right font-mono text-sm ${isUp ? 'text-neon-green' : 'text-red-400'}">${isUp ? '+' : ''}${c.change.toFixed(2)}%</td>
+      <td class="px-6 py-4 text-right text-sm text-zinc-400 hidden md:table-cell">$${c.mcap}</td>
+      <td class="px-6 py-4 text-right text-sm text-zinc-400 hidden lg:table-cell">$${c.vol}</td>
+      <td class="px-6 py-4 hidden sm:table-cell"><canvas class="ml-auto" width="80" height="30" data-trend="${c.change >= 0 ? 1 : -1}"></canvas></td>
+      <td class="px-6 py-4 text-center"><button class="px-3 py-1.5 text-xs bg-neon-blue/10 text-neon-blue rounded-lg hover:bg-neon-blue/20 transition-colors" onclick="event.stopPropagation();navigateTo('exchange')">Trade</button></td>
+    </tr>`;
+      }).join('');
+
+      // Draw mini charts
+      body.querySelectorAll('canvas').forEach(c => {
+        const trend = parseInt(c.dataset.trend);
+        const ctx = c.getContext('2d');
+        const data = generateChartData(15, 50, 5, trend);
+        const min = Math.min(...data), max = Math.max(...data), range = max - min;
+        ctx.beginPath();
+        data.forEach((v, i) => {
+          const x = (i / (data.length - 1)) * 80;
+          const y = 30 - ((v - min) / range) * 28;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = trend > 0 ? '#10b981' : '#ef4444';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+    }
+
+    function filterMarkets() { renderMarkets(); }
+    function setMarketFilter(btn, filter) {
+      currentMarketFilter = filter;
+      document.querySelectorAll('.market-filter-btn').forEach(b => { b.classList.remove('active', 'bg-neon-blue/20', 'text-neon-blue'); b.classList.add('text-zinc-500'); });
+      btn.classList.add('active', 'bg-neon-blue/20', 'text-neon-blue');
+      btn.classList.remove('text-zinc-500');
+      renderMarkets();
+    }
+
+    // ==================== DASHBOARD ====================
+    function renderDashboard() {
+      // Watchlist
+      const wl = document.getElementById('watchlist');
+      if (!wl) return;
+      wl.innerHTML = cryptoData.slice(0, 6).map(c => {
+        const isUp = c.change >= 0;
+        return `<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br ${c.color} flex items-center justify-center"><span class="iconify text-white text-xs" data-icon="${c.icon}"></span></div>
+      <div class="flex-1"><div class="text-xs font-medium">${c.symbol}</div><div class="text-[10px] text-zinc-500">${c.name}</div></div>
+      <div class="text-right"><div class="text-xs font-mono">$${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div><div class="text-[10px] font-mono ${isUp ? 'text-neon-green' : 'text-red-400'}">${isUp ? '+' : ''}${c.change.toFixed(2)}%</div></div>
+    </div>`;
+      }).join('');
+
+      // Transactions
+      const tb = document.getElementById('transaction-table');
+      tb.innerHTML = transactions.map(t => {
+        const icons = { Buy: 'lucide:arrow-down-left', Sell: 'lucide:arrow-up-right', Stake: 'lucide:gem', Transfer: 'lucide:arrow-right-left' };
+        const colors = { Buy: 'text-neon-green', Sell: 'text-red-400', Stake: 'text-neon-cyan', Transfer: 'text-neon-blue' };
+        return `<tr class="border-b border-white/5">
+      <td class="py-3"><div class="flex items-center gap-2"><span class="iconify ${colors[t.type]}" data-icon="${icons[t.type]}"></span><span class="text-sm">${t.type}</span></div></td>
+      <td class="py-3 text-sm">${t.asset}</td>
+      <td class="py-3 text-right font-mono text-sm">${t.amount}</td>
+      <td class="py-3 text-right font-mono text-sm hidden sm:table-cell">${t.value}</td>
+      <td class="py-3 text-right text-xs text-zinc-500 hidden md:table-cell">${t.date}</td>
+      <td class="py-3 text-right"><span class="text-xs ${t.statusColor}">${t.status}</span></td>
+    </tr>`;
+      }).join('');
+    }
+
+    function drawPortfolioChart() {
+      const data = generateChartData(60, 40000, 1500, 3);
+      drawLineChart('portfolio-chart', data, '#8b5cf6', '#3b82f6', true);
+    }
+
+    // ==================== EXCHANGE ====================
+    let tradeType = 'buy';
+
+    function setTradeType(type) {
+      tradeType = type;
+      const buyBtn = document.getElementById('buy-btn');
+      const sellBtn = document.getElementById('sell-btn');
+      const submitBtn = document.getElementById('trade-submit-btn');
+      if (type === 'buy') {
+        buyBtn.className = 'flex-1 py-2 text-sm font-medium bg-neon-green/20 text-neon-green rounded-lg';
+        sellBtn.className = 'flex-1 py-2 text-sm font-medium text-zinc-500 rounded-lg';
+        submitBtn.className = 'w-full py-3 bg-gradient-to-r from-neon-green to-neon-cyan rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity';
+        submitBtn.textContent = 'Buy BTC';
+      } else {
+        sellBtn.className = 'flex-1 py-2 text-sm font-medium bg-red-500/20 text-red-400 rounded-lg';
+        buyBtn.className = 'flex-1 py-2 text-sm font-medium text-zinc-500 rounded-lg';
+        submitBtn.className = 'w-full py-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity';
+        submitBtn.textContent = 'Sell BTC';
+      }
+    }
+
+    function setTradePercent(pct) {
+      const maxBtc = 0.7123;
+      const amount = (maxBtc * pct / 100).toFixed(4);
+      document.getElementById('trade-amount').value = amount;
+      updateTradeTotal();
+    }
+
+    function updateTradeTotal() {
+      const amount = parseFloat(document.getElementById('trade-amount')?.value || 0);
+      const price = 67842.30;
+      const total = amount * price;
+      const fee = total * 0.001;
+      document.getElementById('trade-total').textContent = '$' + total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('trade-fee').textContent = '$' + fee.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function executeTrade() {
+      const amount = parseFloat(document.getElementById('trade-amount')?.value || 0);
+      if (amount <= 0) { showToast('Please enter a valid amount', 'error'); return; }
+      showToast(`${tradeType === 'buy' ? 'Buy' : 'Sell'} order placed: ${amount} BTC`, 'success');
+    }
+
+    function drawExchangeChart() {
+      const data = generateChartData(100, 67842, 300, 2);
+      drawLineChart('exchange-chart', data, '#3b82f6', '#8b5cf6', true);
+    }
+
+    function renderOrderBook() {
+      const sells = document.getElementById('order-book-sells');
+      const buys = document.getElementById('order-book-buys');
+      const basePrice = 67842.30;
+
+      sells.innerHTML = Array.from({ length: 8 }, (_, i) => {
+        const price = (basePrice + (8 - i) * 12.5 + Math.random() * 5).toFixed(2);
+        const amt = (Math.random() * 2 + 0.1).toFixed(4);
+        const width = Math.random() * 60 + 20;
+        return `<div class="relative flex justify-between text-[10px] font-mono py-0.5 px-2">
+      <div class="absolute right-0 top-0 bottom-0 bg-red-500/10" style="width:${width}%"></div>
+      <span class="text-red-400 relative z-10">${Number(price).toLocaleString()}</span>
+      <span class="text-zinc-500 relative z-10">${amt}</span>
+    </div>`;
+      }).reverse().join('');
+
+      buys.innerHTML = Array.from({ length: 8 }, (_, i) => {
+        const price = (basePrice - (i + 1) * 12.5 - Math.random() * 5).toFixed(2);
+        const amt = (Math.random() * 2 + 0.1).toFixed(4);
+        const width = Math.random() * 60 + 20;
+        return `<div class="relative flex justify-between text-[10px] font-mono py-0.5 px-2">
+      <div class="absolute right-0 top-0 bottom-0 bg-neon-green/10" style="width:${width}%"></div>
+      <span class="text-neon-green relative z-10">${Number(price).toLocaleString()}</span>
+      <span class="text-zinc-500 relative z-10">${amt}</span>
+    </div>`;
+      }).join('');
+    }
+
+    function renderMarketTrades() {
+      const tb = document.getElementById('market-trades');
+      const basePrice = 67842.30;
+      tb.innerHTML = Array.from({ length: 12 }, () => {
+        const isBuy = Math.random() > 0.45;
+        const price = (basePrice + (Math.random() - 0.5) * 50).toFixed(2);
+        const amt = (Math.random() * 0.5 + 0.01).toFixed(4);
+        const total = (price * amt).toFixed(2);
+        const mins = Math.floor(Math.random() * 30);
+        return `<tr class="border-b border-white/5">
+      <td class="py-1.5 ${isBuy ? 'text-neon-green' : 'text-red-400'}">${Number(price).toLocaleString()}</td>
+      <td class="py-1.5 text-right text-zinc-400">${amt}</td>
+      <td class="py-1.5 text-right text-zinc-400">${Number(total).toLocaleString()}</td>
+      <td class="py-1.5 text-right text-zinc-600 hidden sm:table-cell">${mins}m ago</td>
+    </tr>`;
+      }).join('');
+    }
+
+    // ==================== PRICING ====================
+    function setPricingCycle(cycle) {
+      const monthly = document.getElementById('monthly-btn');
+      const yearly = document.getElementById('yearly-btn');
+      if (cycle === 'monthly') {
+        monthly.className = 'px-4 py-2 text-sm font-medium bg-neon-blue/20 text-neon-blue rounded-md';
+        yearly.className = 'px-4 py-2 text-sm font-medium text-zinc-500 rounded-md';
+      } else {
+        yearly.className = 'px-4 py-2 text-sm font-medium bg-neon-blue/20 text-neon-blue rounded-md';
+        monthly.className = 'px-4 py-2 text-sm font-medium text-zinc-500 rounded-md';
+      }
+      document.querySelectorAll('.pricing-amount').forEach(el => {
+        const val = cycle === 'monthly' ? el.dataset.monthly : el.dataset.yearly;
+        el.textContent = '$' + val;
+      });
+    }
+
+    // ==================== AUTH ====================
+    function handleLogin(e) {
+      e.preventDefault();
+      showToast('Welcome back! Redirecting to dashboard...', 'success');
+      setTimeout(() => navigateTo('wallet'), 1500);
+    }
+
+    function handleSignup(e) {
+      e.preventDefault();
+      showToast('Account created successfully!', 'success');
+      setTimeout(() => navigateTo('wallet'), 1500);
+    }
+
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // Password strength
+    document.addEventListener('input', (e) => {
+      if (e.target.id === 'signup-password') {
+        const val = e.target.value;
+        let strength = 0;
+        if (val.length >= 8) strength++;
+        if (/[A-Z]/.test(val)) strength++;
+        if (/[0-9]/.test(val)) strength++;
+        if (/[^A-Za-z0-9]/.test(val)) strength++;
+        const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-neon-green'];
+        for (let i = 1; i <= 4; i++) {
+          const el = document.getElementById('str-' + i);
+          el.className = 'h-1 flex-1 rounded ' + (i <= strength ? colors[strength - 1] : 'bg-white/10');
+        }
+      }
+    });
+
+    // ==================== TICKER ====================
+    function initTicker() {
+      const items = cryptoData.map(c =>
+        `<div class="flex items-center gap-2 text-xs"><span class="font-medium">${c.symbol}</span><span class="font-mono text-zinc-400">$${c.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span><span class="font-mono ${c.change >= 0 ? 'text-neon-green' : 'text-red-400'}">${c.change >= 0 ? '+' : ''}${c.change.toFixed(2)}%</span></div>`
+      ).join('');
+      document.getElementById('ticker-content').innerHTML = items;
+      document.getElementById('ticker-content-clone').innerHTML = items;
+    }
+
+    // ==================== COUNTERS ====================
+    function animateCounters() {
+      document.querySelectorAll('.counter').forEach(el => {
+        const target = parseFloat(el.dataset.target);
+        const duration = 2000;
+        const start = performance.now();
+        const prefix = el.textContent.startsWith('$') ? '$' : '';
+        const suffix = el.textContent.includes('%') ? '%' : '';
+        function update(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = target * eased;
+          if (target >= 100) el.textContent = prefix + current.toFixed(1) + suffix;
+          else if (target >= 10) el.textContent = prefix + current.toFixed(1) + 'M' + suffix;
+          else el.textContent = prefix + current.toFixed(1) + suffix;
+          if (progress < 1) requestAnimationFrame(update);
+          else {
+            if (el.dataset.target === '2.4') el.textContent = '$2.4T';
+            if (el.dataset.target === '12') el.textContent = '12M';
+            if (el.dataset.target === '99.9') el.textContent = '99.9%';
+          }
+        }
+        requestAnimationFrame(update);
+      });
+    }
+
+    // ==================== LIVE PRICE UPDATE ====================
+    function updatePrices() {
+      cryptoData.forEach(c => {
+        c.price *= (1 + (Math.random() - 0.498) * 0.002);
+        c.change += (Math.random() - 0.5) * 0.1;
+        c.change = parseFloat(c.change.toFixed(2));
+      });
+    }
+
+    // ==================== INIT ====================
+    function init() {
+      initTicker();
+      animateCounters();
+
+      // Draw initial charts
+      setTimeout(() => {
+        drawMiniChart('mini-chart-btc', 2);
+        drawMiniChart('mini-chart-eth', 4);
+
+        const mainData = generateChartData(80, 67842, 400, 2);
+        drawLineChart('main-chart', mainData, '#3b82f6', '#8b5cf6', true);
+
+        const tradingData = generateChartData(60, 67842, 300, 1.5);
+        drawLineChart('trading-chart', tradingData, '#3b82f6', '#8b5cf6', false);
+
+        const mobileData = generateChartData(30, 42000, 1500, 2);
+        drawLineChart('mobile-chart', mobileData, '#8b5cf6', '#3b82f6', false);
+
+        drawPortfolioChart();
+        drawExchangeChart();
+      }, 100);
+
+      renderMarkets();
+      renderDashboard();
+      renderOrderBook();
+      renderMarketTrades();
+
+      // Auto-refresh
+      setInterval(() => {
+        updatePrices();
+        const activePage = document.querySelector('.page.active')?.id;
+        if (activePage === 'page-home') {
+          drawMiniChart('mini-chart-btc', 2);
+          drawMiniChart('mini-chart-eth', 4);
+        }
+      }, 5000);
+
+      // Resize handler
+      window.addEventListener('resize', () => {
+        const activePage = document.querySelector('.page.active')?.id;
+        if (activePage === 'page-home') {
+          const mainData = generateChartData(80, 67842, 400, 2);
+          drawLineChart('main-chart', mainData, '#3b82f6', '#8b5cf6', true);
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>

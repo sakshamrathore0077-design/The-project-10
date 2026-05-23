@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AXIOM — Creative Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            void: '#030303',
+            surface: '#0a0a0a',
+            surfaceLight: '#111111',
+            neonCyan: '#00F0FF',
+            neonPurple: '#8B5CF6',
+            neonPink: '#EC4899',
+            neonGreen: '#22C55E',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      background: #030303;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #030303;
+      color: #fff;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background: #00F0FF;
+      border-radius: 50%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 99999;
+      mix-blend-mode: difference;
+      transition: transform 0.1s ease;
+    }
+
+    .cursor-ring {
+      width: 40px;
+      height: 40px;
+      border: 1.5px solid rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 99998;
+      mix-blend-mode: difference;
+      transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+    }
+
+    .cursor-ring.hovering {
+      width: 80px;
+      height: 80px;
+      border-color: #00F0FF;
+      background: rgba(0, 240, 255, 0.05);
+    }
+
+    /* Preloader */
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      background: #030303;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .preloader-text {
+      font-family: 'Space Grotesk';
+      font-size: 14px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .preloader-bar {
+      width: 200px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preloader-fill {
+      height: 100%;
+      background: #00F0FF;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* Noise overlay */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    /* Typography */
+    .display-xl {
+      font-family: 'Space Grotesk';
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+    }
+
+    .display-lg {
+      font-family: 'Space Grotesk';
+      font-weight: 600;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+
+    .heading {
+      font-family: 'Space Grotesk';
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    /* Reveal animations */
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(80px);
+    }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    .char-reveal .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(100%);
+      clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    }
+
+    .char-reveal.active .char {
+      opacity: 1;
+      transform: translateY(0);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Hero */
+    .hero-video-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(3, 3, 3, 0.3) 0%, rgba(3, 3, 3, 0.6) 50%, rgba(3, 3, 3, 1) 100%);
+    }
+
+    /* Horizontal Scroll */
+    .horizontal-section {
+      overflow: hidden;
+    }
+
+    .horizontal-track {
+      display: flex;
+      gap: 32px;
+      will-change: transform;
+    }
+
+    /* Project Card */
+    .project-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .project-card img {
+      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+      will-change: transform;
+    }
+
+    .project-card:hover img {
+      transform: scale(1.08);
+      filter: brightness(0.6);
+    }
+
+    .project-card .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 32px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .project-card:hover .overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Magnetic button */
+    .magnetic-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .magnetic-btn .btn-text {
+      position: relative;
+      z-index: 2;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .magnetic-btn .btn-bg {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Service Block */
+    .service-block {
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 48px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .service-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 240, 255, 0.08), transparent 60%);
+      transition: opacity 0.5s ease;
+    }
+
+    .service-block:hover::before {
+      opacity: 1;
+    }
+
+    .service-block:hover {
+      border-color: rgba(0, 240, 255, 0.2);
+      transform: translateY(-4px);
+    }
+
+    /* Team card */
+    .team-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .team-card img {
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+    }
+
+    .team-card:hover img {
+      transform: scale(1.06);
+      filter: brightness(0.5) saturate(0.8);
+    }
+
+    .team-card .team-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .team-card:hover .team-info {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Award row */
+    .award-row {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 20px 0;
+      display: flex;
+      align-items: center;
+      transition: all 0.4s ease;
+      cursor: default;
+    }
+
+    .award-row:hover {
+      padding-left: 20px;
+      border-color: rgba(0, 240, 255, 0.3);
+    }
+
+    .award-row:hover .award-title {
+      color: #00F0FF;
+    }
+
+    /* Testimonial */
+    .testimonial-card {
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 48px;
+      position: relative;
+      transition: all 0.5s ease;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .testimonial-card:hover {
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    /* Page transition */
+    .page-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 99990;
+      background: #030303;
+      transform: translateY(100%);
+      pointer-events: none;
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      animation: scrollBounce 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollBounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(8px);
+      }
+    }
+
+    /* Glow effects */
+    .glow-cyan {
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+    }
+
+    .glow-text-cyan {
+      text-shadow: 0 0 40px rgba(0, 240, 255, 0.3);
+    }
+
+    /* Nav menu overlay */
+    .nav-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9990;
+      background: rgba(3, 3, 3, 0.98);
+      clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+      transition: clip-path 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-overlay.active {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    /* Line draw animation */
+    .line-draw {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+    }
+
+    /* Section counter */
+    .section-label {
+      font-family: 'Space Grotesk';
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Marquee */
+    .marquee-track {
+      display: flex;
+      animation: marqueeScroll 30s linear infinite;
+    }
+
+    @keyframes marqueeScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Masonry */
+    .masonry-grid {
+      columns: 2;
+      column-gap: 20px;
+    }
+
+    .masonry-grid .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .masonry-grid {
+        columns: 1;
+      }
+
+      .display-xl {
+        font-size: 48px !important;
+      }
+
+      .display-lg {
+        font-size: 36px !important;
+      }
+    }
+
+    /* Smooth number counter */
+    .counter-value {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Selection color */
+    ::selection {
+      background: rgba(0, 240, 255, 0.3);
+      color: #fff;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #030303;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 240, 255, 0.4);
+    }
+
+    /* Project preview modal */
+    .project-preview {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: #030303;
+      clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+      transition: clip-path 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+      overflow-y: auto;
+    }
+
+    .project-preview.active {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    /* Distortion hover */
+    .distort-hover {
+      transition: filter 0.3s ease;
+    }
+
+    .distort-hover:hover {
+      filter: url(#distortion);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SVG Filter for distortion -->
+  <svg style="position:absolute;width:0;height:0;">
+    <filter id="distortion">
+      <feTurbulence type="turbulence" baseFrequency="0.01" numOctaves="3" result="noise" seed="2" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </svg>
+
+  <!-- Noise Overlay -->
+  <div class="noise-overlay"></div>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-text">Axiom Studio</div>
+    <div class="preloader-bar">
+      <div class="preloader-fill" id="preloaderFill"></div>
+    </div>
+  </div>
+
+  <!-- Page Transition -->
+  <div class="page-transition" id="pageTransition"></div>
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-[9995] mix-blend-difference" id="mainNav">
+    <div class="max-w-[1400px] mx-auto px-6 md:px-12 py-6 flex items-center justify-between">
+      <a href="#hero" class="font-display text-xl font-bold tracking-tight text-white hover-target">
+        AXIOM<span class="text-neonCyan">.</span>
+      </a>
+      <div class="hidden md:flex items-center gap-10">
+        <a href="#hero"
+          class="text-xs font-medium uppercase tracking-[0.15em] text-white/70 hover:text-white transition-colors duration-300 hover-target nav-link">Home</a>
+        <a href="#projects"
+          class="text-xs font-medium uppercase tracking-[0.15em] text-white/70 hover:text-white transition-colors duration-300 hover-target nav-link">Projects</a>
+        <a href="#services"
+          class="text-xs font-medium uppercase tracking-[0.15em] text-white/70 hover:text-white transition-colors duration-300 hover-target nav-link">Services</a>
+        <a href="#studio"
+          class="text-xs font-medium uppercase tracking-[0.15em] text-white/70 hover:text-white transition-colors duration-300 hover-target nav-link">Studio</a>
+        <a href="#team"
+          class="text-xs font-medium uppercase tracking-[0.15em] text-white/70 hover:text-white transition-colors duration-300 hover-target nav-link">Team</a>
+        <a href="#careers"
+          class="text-xs font-medium uppercase tracking-[0.15em] text-white/70 hover:text-white transition-colors duration-300 hover-target nav-link">Careers</a>
+        <a href="#contact"
+          class="magnetic-btn rounded-full border border-white/20 px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] hover-target overflow-hidden">
+          <span class="btn-bg bg-white"></span>
+          <span class="btn-text text-black">Let's Talk</span>
+        </a>
+      </div>
+      <button class="md:hidden text-white hover-target" id="menuToggle">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav Overlay -->
+  <div class="nav-overlay" id="navOverlay">
+    <div class="flex flex-col items-center gap-8">
+      <a href="#hero"
+        class="display-xl text-5xl md:text-7xl text-white hover:text-neonCyan transition-colors duration-300 mobile-nav-link">Home</a>
+      <a href="#projects"
+        class="display-xl text-5xl md:text-7xl text-white hover:text-neonCyan transition-colors duration-300 mobile-nav-link">Projects</a>
+      <a href="#services"
+        class="display-xl text-5xl md:text-7xl text-white hover:text-neonCyan transition-colors duration-300 mobile-nav-link">Services</a>
+      <a href="#studio"
+        class="display-xl text-5xl md:text-7xl text-white hover:text-neonCyan transition-colors duration-300 mobile-nav-link">Studio</a>
+      <a href="#team"
+        class="display-xl text-5xl md:text-7xl text-white hover:text-neonCyan transition-colors duration-300 mobile-nav-link">Team</a>
+      <a href="#careers"
+        class="display-xl text-5xl md:text-7xl text-white hover:text-neonCyan transition-colors duration-300 mobile-nav-link">Careers</a>
+      <a href="#contact"
+        class="display-xl text-5xl md:text-7xl text-neonCyan transition-colors duration-300 mobile-nav-link">Contact</a>
+    </div>
+  </div>
+
+  <!-- ==================== HERO ==================== -->
+  <section id="hero" class="relative h-screen flex items-center justify-center overflow-hidden">
+    <!-- Video Background -->
+    <div class="absolute inset-0">
+      <video autoplay muted loop playsinline class="w-full h-full object-cover"
+        poster="https://picsum.photos/seed/axiomhero/1920/1080.jpg">
+        <source src="" type="video/mp4">
+      </video>
+      <div class="hero-video-overlay"></div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 text-center px-6 max-w-[1200px] mx-auto" id="heroContent">
+      <div class="mb-6">
+        <span class="section-label text-neonCyan">Creative Studio — Est. 2019</span>
+      </div>
+      <h1 class="display-xl text-[56px] md:text-[100px] lg:text-[140px] text-white mb-8 hero-title">
+        <span class="inline-block overflow-hidden"><span class="inline-block hero-line"
+            style="transform:translateY(100%)">We Create</span></span><br>
+        <span class="inline-block overflow-hidden"><span class="inline-block hero-line"
+            style="transform:translateY(100%)">Digital</span></span>
+        <span class="inline-block overflow-hidden"><span class="inline-block hero-line text-neonCyan glow-text-cyan"
+            style="transform:translateY(100%)">Experiences</span></span>
+      </h1>
+      <p class="text-white/50 text-lg md:text-xl font-light max-w-[600px] mx-auto mb-12 hero-subtitle"
+        style="opacity:0;transform:translateY(30px)">
+        Award-winning studio crafting immersive digital products, brands, and experiences for the world's most ambitious
+        companies.
+      </p>
+      <div class="flex items-center justify-center gap-6 hero-cta" style="opacity:0;transform:translateY(30px)">
+        <a href="#projects"
+          class="magnetic-btn rounded-full bg-neonCyan text-void px-8 py-4 text-sm font-bold uppercase tracking-[0.1em] hover-target overflow-hidden">
+          <span class="btn-text">View Work</span>
+        </a>
+        <a href="#contact"
+          class="magnetic-btn rounded-full border border-white/30 px-8 py-4 text-sm font-bold uppercase tracking-[0.1em] text-white hover-target overflow-hidden">
+          <span class="btn-bg bg-white"></span>
+          <span class="btn-text">Contact</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div
+      class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 scroll-indicator hero-scroll"
+      style="opacity:0">
+      <span class="text-[10px] uppercase tracking-[0.2em] text-white/30">Scroll</span>
+      <div class="w-px h-8 bg-gradient-to-b from-white/50 to-transparent"></div>
+    </div>
+  </section>
+
+  <!-- ==================== MARQUEE ==================== -->
+  <section class="py-8 border-y border-white/5 overflow-hidden">
+    <div class="marquee-track">
+      <div class="flex items-center gap-12 whitespace-nowrap pr-12">
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Strategy</span>
+        <span class="text-neonCyan text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Design</span>
+        <span class="text-neonPurple text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Development</span>
+        <span class="text-neonPink text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Motion</span>
+        <span class="text-neonGreen text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Branding</span>
+        <span class="text-neonCyan text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Innovation</span>
+        <span class="text-neonPurple text-2xl">✦</span>
+      </div>
+      <div class="flex items-center gap-12 whitespace-nowrap pr-12">
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Strategy</span>
+        <span class="text-neonCyan text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Design</span>
+        <span class="text-neonPurple text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Development</span>
+        <span class="text-neonPink text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Motion</span>
+        <span class="text-neonGreen text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Branding</span>
+        <span class="text-neonCyan text-2xl">✦</span>
+        <span class="display-lg text-4xl md:text-6xl text-white/10">Innovation</span>
+        <span class="text-neonPurple text-2xl">✦</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== HORIZONTAL SCROLL PROJECTS ==================== -->
+  <section id="projects" class="py-32 px-6 md:px-12 horizontal-section">
+    <div class="max-w-[1400px] mx-auto mb-16">
+      <div class="flex items-end justify-between">
+        <div>
+          <span class="section-label text-neonCyan reveal-up">01 — Selected Work</span>
+          <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 reveal-up">Featured<br>Projects</h2>
+        </div>
+        <a href="#portfolio"
+          class="hidden md:flex magnetic-btn items-center gap-3 border border-white/15 rounded-full px-6 py-3 text-xs font-bold uppercase tracking-[0.1em] text-white/70 hover:text-white hover-target">
+          <span>View All</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="horizontal-track" id="horizontalTrack">
+      <!-- Project 1 -->
+      <div class="project-card flex-shrink-0 w-[80vw] md:w-[50vw] lg:w-[40vw] h-[60vh] hover-target" data-project="1">
+        <img src="https://picsum.photos/seed/proj-nebula/800/600.jpg" alt="Nebula" class="w-full h-full object-cover">
+        <div class="overlay">
+          <span class="text-neonCyan text-xs font-bold uppercase tracking-[0.15em] mb-2">Branding / Web</span>
+          <h3 class="heading text-2xl md:text-3xl text-white">Nebula Finance</h3>
+          <p class="text-white/50 text-sm mt-2">Redefining digital banking through immersive design</p>
+        </div>
+      </div>
+      <!-- Project 2 -->
+      <div class="project-card flex-shrink-0 w-[80vw] md:w-[50vw] lg:w-[40vw] h-[60vh] hover-target" data-project="2">
+        <img src="https://picsum.photos/seed/proj-aurora/800/600.jpg" alt="Aurora" class="w-full h-full object-cover">
+        <div class="overlay">
+          <span class="text-neonPurple text-xs font-bold uppercase tracking-[0.15em] mb-2">Product / UX</span>
+          <h3 class="heading text-2xl md:text-3xl text-white">Aurora Labs</h3>
+          <p class="text-white/50 text-sm mt-2">AI-powered creative platform for enterprises</p>
+        </div>
+      </div>
+      <!-- Project 3 -->
+      <div class="project-card flex-shrink-0 w-[80vw] md:w-[50vw] lg:w-[40vw] h-[60vh] hover-target" data-project="3">
+        <img src="https://picsum.photos/seed/proj-zenith/800/600.jpg" alt="Zenith" class="w-full h-full object-cover">
+        <div class="overlay">
+          <span class="text-neonPink text-xs font-bold uppercase tracking-[0.15em] mb-2">E-Commerce / Motion</span>
+          <h3 class="heading text-2xl md:text-3xl text-white">Zenith Collective</h3>
+          <p class="text-white/50 text-sm mt-2">Luxury fashion meets digital innovation</p>
+        </div>
+      </div>
+      <!-- Project 4 -->
+      <div class="project-card flex-shrink-0 w-[80vw] md:w-[50vw] lg:w-[40vw] h-[60vh] hover-target" data-project="4">
+        <img src="https://picsum.photos/seed/proj-vertex/800/600.jpg" alt="Vertex" class="w-full h-full object-cover">
+        <div class="overlay">
+          <span class="text-neonGreen text-xs font-bold uppercase tracking-[0.15em] mb-2">App / Development</span>
+          <h3 class="heading text-2xl md:text-3xl text-white">Vertex Health</h3>
+          <p class="text-white/50 text-sm mt-2">Transforming healthcare with intuitive design</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== IMMERSIVE SHOWCASE ==================== -->
+  <section class="relative py-32 overflow-hidden" id="showcase">
+    <div class="max-w-[1400px] mx-auto px-6 md:px-12">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <span class="section-label text-neonPurple reveal-up">02 — Immersive</span>
+          <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 mb-8 reveal-up">
+            Where Vision<br>Meets <span class="text-neonPurple">Reality</span>
+          </h2>
+          <p class="text-white/50 text-lg font-light leading-relaxed mb-8 reveal-up">
+            We don't just build websites — we architect digital experiences that transcend expectations. Every pixel,
+            every interaction, every moment is carefully orchestrated to create something extraordinary.
+          </p>
+          <div class="grid grid-cols-3 gap-8 reveal-up">
+            <div>
+              <div class="display-lg text-3xl md:text-4xl text-neonCyan counter-value" data-target="150">0</div>
+              <div class="text-white/30 text-xs uppercase tracking-[0.15em] mt-1">Projects</div>
+            </div>
+            <div>
+              <div class="display-lg text-3xl md:text-4xl text-neonPurple counter-value" data-target="42">0</div>
+              <div class="text-white/30 text-xs uppercase tracking-[0.15em] mt-1">Awards</div>
+            </div>
+            <div>
+              <div class="display-lg text-3xl md:text-4xl text-neonPink counter-value" data-target="98">0</div>
+              <div class="text-white/30 text-xs uppercase tracking-[0.15em] mt-1">Clients</div>
+            </div>
+          </div>
+        </div>
+        <div class="relative showcase-image" style="opacity:0;transform:scale(0.9)">
+          <div class="relative rounded-2xl overflow-hidden aspect-[4/5]">
+            <img src="https://picsum.photos/seed/showcase-immersive/800/1000.jpg" alt="Immersive"
+              class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-void/60 to-transparent"></div>
+          </div>
+          <!-- Floating accent elements -->
+          <div class="absolute -top-6 -right-6 w-32 h-32 border border-neonCyan/20 rounded-2xl floating-element"
+            style="animation: float 6s ease-in-out infinite"></div>
+          <div class="absolute -bottom-4 -left-4 w-24 h-24 bg-neonPurple/10 rounded-xl floating-element"
+            style="animation: float 8s ease-in-out infinite 1s"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg)
+      }
+
+      50% {
+        transform: translateY(-15px) rotate(2deg)
+      }
+    }
+  </style>
+
+  <!-- ==================== PORTFOLIO MASONRY ==================== -->
+  <section id="portfolio" class="py-32 px-6 md:px-12">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="text-center mb-16">
+        <span class="section-label text-neonPink reveal-up">03 — Portfolio</span>
+        <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 reveal-up">All Work</h2>
+      </div>
+
+      <!-- Filter -->
+      <div class="flex items-center justify-center gap-4 mb-12 reveal-up flex-wrap">
+        <button
+          class="filter-btn active px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.1em] bg-white text-void hover-target transition-all duration-300">All</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.1em] border border-white/10 text-white/50 hover:text-white hover:border-white/30 hover-target transition-all duration-300">Branding</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.1em] border border-white/10 text-white/50 hover:text-white hover:border-white/30 hover-target transition-all duration-300">Web</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.1em] border border-white/10 text-white/50 hover:text-white hover:border-white/30 hover-target transition-all duration-300">Product</button>
+        <button
+          class="filter-btn px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.1em] border border-white/10 text-white/50 hover:text-white hover:border-white/30 hover-target transition-all duration-300">Motion</button>
+      </div>
+
+      <!-- Masonry Grid -->
+      <div class="masonry-grid" id="masonryGrid">
+        <div class="masonry-item project-card hover-target" data-project="5">
+          <img src="https://picsum.photos/seed/masonry-1/600/800.jpg" alt="Project" class="w-full rounded-lg">
+          <div class="overlay rounded-lg">
+            <span class="text-neonCyan text-[10px] font-bold uppercase tracking-[0.15em]">Branding</span>
+            <h3 class="heading text-xl text-white mt-1">Obsidian Studios</h3>
+          </div>
+        </div>
+        <div class="masonry-item project-card hover-target" data-project="6">
+          <img src="https://picsum.photos/seed/masonry-2/600/450.jpg" alt="Project" class="w-full rounded-lg">
+          <div class="overlay rounded-lg">
+            <span class="text-neonPurple text-[10px] font-bold uppercase tracking-[0.15em]">Web Design</span>
+            <h3 class="heading text-xl text-white mt-1">Prism Analytics</h3>
+          </div>
+        </div>
+        <div class="masonry-item project-card hover-target" data-project="7">
+          <img src="https://picsum.photos/seed/masonry-3/600/700.jpg" alt="Project" class="w-full rounded-lg">
+          <div class="overlay rounded-lg">
+            <span class="text-neonPink text-[10px] font-bold uppercase tracking-[0.15em]">Product</span>
+            <h3 class="heading text-xl text-white mt-1">Flux Music</h3>
+          </div>
+        </div>
+        <div class="masonry-item project-card hover-target" data-project="8">
+          <img src="https://picsum.photos/seed/masonry-4/600/500.jpg" alt="Project" class="w-full rounded-lg">
+          <div class="overlay rounded-lg">
+            <span class="text-neonGreen text-[10px] font-bold uppercase tracking-[0.15em]">Motion</span>
+            <h3 class="heading text-xl text-white mt-1">Kinetic Type</h3>
+          </div>
+        </div>
+        <div class="masonry-item project-card hover-target" data-project="9">
+          <img src="https://picsum.photos/seed/masonry-5/600/650.jpg" alt="Project" class="w-full rounded-lg">
+          <div class="overlay rounded-lg">
+            <span class="text-neonCyan text-[10px] font-bold uppercase tracking-[0.15em]">Web Design</span>
+            <h3 class="heading text-xl text-white mt-1">Echo Platform</h3>
+          </div>
+        </div>
+        <div class="masonry-item project-card hover-target" data-project="10">
+          <img src="https://picsum.photos/seed/masonry-6/600/900.jpg" alt="Project" class="w-full rounded-lg">
+          <div class="overlay rounded-lg">
+            <span class="text-neonPurple text-[10px] font-bold uppercase tracking-[0.15em]">Branding</span>
+            <h3 class="heading text-xl text-white mt-1">Nova Collective</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SERVICES ==================== -->
+  <section id="services" class="py-32 px-6 md:px-12">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-20">
+        <div>
+          <span class="section-label text-neonGreen reveal-up">04 — Services</span>
+          <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 reveal-up">What We<br>Do Best</h2>
+        </div>
+        <div class="flex items-end">
+          <p class="text-white/50 text-lg font-light leading-relaxed reveal-up">
+            From strategy to execution, we deliver end-to-end creative solutions that push boundaries and drive results.
+            Every project is an opportunity to redefine what's possible.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="service-block reveal-up hover-target">
+          <div class="w-12 h-12 rounded-xl bg-neonCyan/10 flex items-center justify-center mb-6">
+            <i data-lucide="compass" class="w-6 h-6 text-neonCyan"></i>
+          </div>
+          <h3 class="heading text-xl text-white mb-3">Brand Strategy</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Defining brand identity, positioning, and narrative that
+            resonates with your audience and stands the test of time.</p>
+          <div class="mt-6 pt-6 border-t border-white/5">
+            <span class="text-white/20 text-xs uppercase tracking-[0.1em]">01</span>
+          </div>
+        </div>
+
+        <div class="service-block reveal-up hover-target">
+          <div class="w-12 h-12 rounded-xl bg-neonPurple/10 flex items-center justify-center mb-6">
+            <i data-lucide="pen-tool" class="w-6 h-6 text-neonPurple"></i>
+          </div>
+          <h3 class="heading text-xl text-white mb-3">UI/UX Design</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Crafting intuitive, beautiful interfaces that delight users
+            and drive engagement through research-driven design.</p>
+          <div class="mt-6 pt-6 border-t border-white/5">
+            <span class="text-white/20 text-xs uppercase tracking-[0.1em]">02</span>
+          </div>
+        </div>
+
+        <div class="service-block reveal-up hover-target">
+          <div class="w-12 h-12 rounded-xl bg-neonPink/10 flex items-center justify-center mb-6">
+            <i data-lucide="code-2" class="w-6 h-6 text-neonPink"></i>
+          </div>
+          <h3 class="heading text-xl text-white mb-3">Development</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Building performant, scalable web applications with
+            cutting-edge technologies and pixel-perfect execution.</p>
+          <div class="mt-6 pt-6 border-t border-white/5">
+            <span class="text-white/20 text-xs uppercase tracking-[0.1em]">03</span>
+          </div>
+        </div>
+
+        <div class="service-block reveal-up hover-target">
+          <div class="w-12 h-12 rounded-xl bg-neonGreen/10 flex items-center justify-center mb-6">
+            <i data-lucide="clapperboard" class="w-6 h-6 text-neonGreen"></i>
+          </div>
+          <h3 class="heading text-xl text-white mb-3">Motion Design</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Bringing stories to life through cinematic motion graphics,
+            animations, and interactive visual experiences.</p>
+          <div class="mt-6 pt-6 border-t border-white/5">
+            <span class="text-white/20 text-xs uppercase tracking-[0.1em]">04</span>
+          </div>
+        </div>
+
+        <div class="service-block reveal-up hover-target">
+          <div class="w-12 h-12 rounded-xl bg-neonCyan/10 flex items-center justify-center mb-6">
+            <i data-lucide="smartphone" class="w-6 h-6 text-neonCyan"></i>
+          </div>
+          <h3 class="heading text-xl text-white mb-3">Digital Products</h3>
+          <p class="text-white/40 text-sm leading-relaxed">End-to-end product design and development, from MVP to scale,
+            with a focus on user-centric innovation.</p>
+          <div class="mt-6 pt-6 border-t border-white/5">
+            <span class="text-white/20 text-xs uppercase tracking-[0.1em]">05</span>
+          </div>
+        </div>
+
+        <div class="service-block reveal-up hover-target">
+          <div class="w-12 h-12 rounded-xl bg-neonPurple/10 flex items-center justify-center mb-6">
+            <i data-lucide="globe" class="w-6 h-6 text-neonPurple"></i>
+          </div>
+          <h3 class="heading text-xl text-white mb-3">Web3 & Immersive</h3>
+          <p class="text-white/40 text-sm leading-relaxed">Pioneering in Web3, AR/VR, and spatial computing to create
+            next-generation digital experiences.</p>
+          <div class="mt-6 pt-6 border-t border-white/5">
+            <span class="text-white/20 text-xs uppercase tracking-[0.1em]">06</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== AWARDS ==================== -->
+  <section class="py-32 px-6 md:px-12 border-y border-white/5">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="text-center mb-16">
+        <span class="section-label text-neonCyan reveal-up">05 — Recognition</span>
+        <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 reveal-up">Awards &<br>Recognition</h2>
+      </div>
+
+      <div class="max-w-[900px] mx-auto">
+        <div class="award-row reveal-up">
+          <span class="text-white/20 text-sm font-medium w-20">2024</span>
+          <span class="heading text-lg text-white award-title flex-1 transition-colors duration-300">Awwwards — Site of
+            the Year</span>
+          <span class="text-white/30 text-xs uppercase tracking-[0.1em]">Nebula Finance</span>
+        </div>
+        <div class="award-row reveal-up">
+          <span class="text-white/20 text-sm font-medium w-20">2024</span>
+          <span class="heading text-lg text-white award-title flex-1 transition-colors duration-300">FWA — FOTD</span>
+          <span class="text-white/30 text-xs uppercase tracking-[0.1em]">Aurora Labs</span>
+        </div>
+        <div class="award-row reveal-up">
+          <span class="text-white/20 text-sm font-medium w-20">2023</span>
+          <span class="heading text-lg text-white award-title flex-1 transition-colors duration-300">CSS Design Awards —
+            Best UI</span>
+          <span class="text-white/30 text-xs uppercase tracking-[0.1em]">Zenith Collective</span>
+        </div>
+        <div class="award-row reveal-up">
+          <span class="text-white/20 text-sm font-medium w-20">2023</span>
+          <span class="heading text-lg text-white award-title flex-1 transition-colors duration-300">Red Dot — Best of
+            the Best</span>
+          <span class="text-white/30 text-xs uppercase tracking-[0.1em]">Vertex Health</span>
+        </div>
+        <div class="award-row reveal-up">
+          <span class="text-white/20 text-sm font-medium w-20">2023</span>
+          <span class="heading text-lg text-white award-title flex-1 transition-colors duration-300">Webby Awards — Best
+            Visual Design</span>
+          <span class="text-white/30 text-xs uppercase tracking-[0.1em]">Flux Music</span>
+        </div>
+        <div class="award-row reveal-up">
+          <span class="text-white/20 text-sm font-medium w-20">2022</span>
+          <span class="heading text-lg text-white award-title flex-1 transition-colors duration-300">D&AD — Yellow
+            Pencil</span>
+          <span class="text-white/30 text-xs uppercase tracking-[0.1em]">Obsidian Studios</span>
+        </div>
+        <div class="award-row reveal-up">
+          <span class="text-white/20 text-sm font-medium w-20">2022</span>
+          <span class="heading text-lg text-white award-title flex-1 transition-colors duration-300">Awwwards —
+            Developer Award</span>
+          <span class="text-white/30 text-xs uppercase tracking-[0.1em]">Prism Analytics</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== STUDIO ==================== -->
+  <section id="studio" class="py-32 px-6 md:px-12">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div class="order-2 lg:order-1 reveal-scale">
+          <div class="relative rounded-2xl overflow-hidden aspect-[4/3]">
+            <img src="https://picsum.photos/seed/studio-space/800/600.jpg" alt="Studio"
+              class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-void/40 to-transparent"></div>
+          </div>
+        </div>
+        <div class="order-1 lg:order-2">
+          <span class="section-label text-neonPink reveal-up">06 — Studio</span>
+          <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 mb-8 reveal-up">
+            The <span class="text-neonPink">Space</span><br>We Create In
+          </h2>
+          <p class="text-white/50 text-lg font-light leading-relaxed mb-6 reveal-up">
+            Based in New York and Tokyo, our studios are designed to inspire. We believe that extraordinary work
+            requires an extraordinary environment — one that fosters creativity, collaboration, and bold
+            experimentation.
+          </p>
+          <p class="text-white/40 text-base font-light leading-relaxed mb-10 reveal-up">
+            Since 2019, we've grown from a two-person team to a collective of 35+ designers, developers, and strategists
+            united by a shared passion for pushing creative boundaries.
+          </p>
+          <a href="#team"
+            class="magnetic-btn inline-flex items-center gap-3 border border-white/15 rounded-full px-8 py-4 text-xs font-bold uppercase tracking-[0.1em] text-white hover-target overflow-hidden reveal-up">
+            <span class="btn-bg bg-white"></span>
+            <span class="btn-text">Meet the Team</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 btn-text"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TEAM ==================== -->
+  <section id="team" class="py-32 px-6 md:px-12">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="text-center mb-16">
+        <span class="section-label text-neonPurple reveal-up">07 — Team</span>
+        <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 reveal-up">The Minds<br>Behind the Magic
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="team-card h-[420px] reveal-up hover-target">
+          <img src="https://picsum.photos/seed/team-ceo/400/500.jpg" alt="Team member"
+            class="w-full h-full object-cover">
+          <div class="team-info">
+            <h4 class="heading text-xl text-white">Elena Voss</h4>
+            <p class="text-neonCyan text-xs uppercase tracking-[0.15em] mt-1">Founder & CEO</p>
+          </div>
+        </div>
+        <div class="team-card h-[420px] reveal-up hover-target">
+          <img src="https://picsum.photos/seed/team-creative/400/500.jpg" alt="Team member"
+            class="w-full h-full object-cover">
+          <div class="team-info">
+            <h4 class="heading text-xl text-white">Marcus Chen</h4>
+            <p class="text-neonPurple text-xs uppercase tracking-[0.15em] mt-1">Creative Director</p>
+          </div>
+        </div>
+        <div class="team-card h-[420px] reveal-up hover-target">
+          <img src="https://picsum.photos/seed/team-dev/400/500.jpg" alt="Team member"
+            class="w-full h-full object-cover">
+          <div class="team-info">
+            <h4 class="heading text-xl text-white">Sasha Kato</h4>
+            <p class="text-neonPink text-xs uppercase tracking-[0.15em] mt-1">Lead Developer</p>
+          </div>
+        </div>
+        <div class="team-card h-[420px] reveal-up hover-target">
+          <img src="https://picsum.photos/seed/team-design/400/500.jpg" alt="Team member"
+            class="w-full h-full object-cover">
+          <div class="team-info">
+            <h4 class="heading text-xl text-white">Aria Laurent</h4>
+            <p class="text-neonGreen text-xs uppercase tracking-[0.15em] mt-1">Design Lead</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TESTIMONIALS ==================== -->
+  <section class="py-32 px-6 md:px-12 border-y border-white/5" id="testimonials">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="text-center mb-16">
+        <span class="section-label text-neonCyan reveal-up">08 — Testimonials</span>
+        <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 reveal-up">Client<br>Voices</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="testimonial-card reveal-up hover-target">
+          <div class="flex items-center gap-1 mb-6">
+            <i data-lucide="star" class="w-4 h-4 text-neonCyan fill-neonCyan"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonCyan fill-neonCyan"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonCyan fill-neonCyan"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonCyan fill-neonCyan"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonCyan fill-neonCyan"></i>
+          </div>
+          <p class="text-white/70 text-base leading-relaxed mb-8">"Axiom transformed our digital presence entirely. The
+            attention to detail and creative vision exceeded every expectation. They don't just deliver projects — they
+            deliver experiences."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10 overflow-hidden">
+              <img src="https://picsum.photos/seed/client-1/100/100.jpg" alt="" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <div class="text-white text-sm font-medium">James Holden</div>
+              <div class="text-white/30 text-xs">CEO, Nebula Finance</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal-up hover-target">
+          <div class="flex items-center gap-1 mb-6">
+            <i data-lucide="star" class="w-4 h-4 text-neonPurple fill-neonPurple"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPurple fill-neonPurple"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPurple fill-neonPurple"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPurple fill-neonPurple"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPurple fill-neonPurple"></i>
+          </div>
+          <p class="text-white/70 text-base leading-relaxed mb-8">"Working with Axiom felt like collaborating with
+            artists who truly understand technology. The result was a product that our users genuinely love — engagement
+            up 340%."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10 overflow-hidden">
+              <img src="https://picsum.photos/seed/client-2/100/100.jpg" alt="" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <div class="text-white text-sm font-medium">Yuki Tanaka</div>
+              <div class="text-white/30 text-xs">CPO, Aurora Labs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal-up hover-target">
+          <div class="flex items-center gap-1 mb-6">
+            <i data-lucide="star" class="w-4 h-4 text-neonPink fill-neonPink"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPink fill-neonPink"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPink fill-neonPink"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPink fill-neonPink"></i>
+            <i data-lucide="star" class="w-4 h-4 text-neonPink fill-neonPink"></i>
+          </div>
+          <p class="text-white/70 text-base leading-relaxed mb-8">"Axiom doesn't follow trends — they set them. Our
+            rebrand was unlike anything in our industry, and the market response has been phenomenal. Worth every
+            penny."</p>
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-white/10 overflow-hidden">
+              <img src="https://picsum.photos/seed/client-3/100/100.jpg" alt="" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <div class="text-white text-sm font-medium">Claire Dubois</div>
+              <div class="text-white/30 text-xs">Director, Zenith Collective</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CAREERS ==================== -->
+  <section id="careers" class="py-32 px-6 md:px-12">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-16">
+        <div>
+          <span class="section-label text-neonGreen reveal-up">09 — Careers</span>
+          <h2 class="display-lg text-4xl md:text-6xl lg:text-7xl text-white mt-4 reveal-up">Join the<br><span
+              class="text-neonGreen">Future</span></h2>
+        </div>
+        <div class="flex items-end">
+          <p class="text-white/50 text-lg font-light leading-relaxed reveal-up">
+            We're always looking for exceptional talent. If you're passionate about pushing creative boundaries and want
+            to work on projects that matter, we want to hear from you.
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div
+          class="group border border-white/5 rounded-xl p-6 md:p-8 flex items-center justify-between hover:border-neonGreen/30 transition-all duration-500 hover-target reveal-up cursor-pointer">
+          <div class="flex items-center gap-6">
+            <span class="text-white/20 text-sm font-mono w-8">01</span>
+            <div>
+              <h3
+                class="heading text-lg md:text-xl text-white group-hover:text-neonGreen transition-colors duration-300">
+                Senior Creative Developer</h3>
+              <div class="flex items-center gap-4 mt-2">
+                <span class="text-white/30 text-xs">New York</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">Full-time</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">$140K–$180K</span>
+              </div>
+            </div>
+          </div>
+          <i data-lucide="arrow-up-right"
+            class="w-5 h-5 text-white/20 group-hover:text-neonGreen transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+        </div>
+
+        <div
+          class="group border border-white/5 rounded-xl p-6 md:p-8 flex items-center justify-between hover:border-neonGreen/30 transition-all duration-500 hover-target reveal-up cursor-pointer">
+          <div class="flex items-center gap-6">
+            <span class="text-white/20 text-sm font-mono w-8">02</span>
+            <div>
+              <h3
+                class="heading text-lg md:text-xl text-white group-hover:text-neonGreen transition-colors duration-300">
+                Motion Designer</h3>
+              <div class="flex items-center gap-4 mt-2">
+                <span class="text-white/30 text-xs">Remote</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">Full-time</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">$100K–$130K</span>
+              </div>
+            </div>
+          </div>
+          <i data-lucide="arrow-up-right"
+            class="w-5 h-5 text-white/20 group-hover:text-neonGreen transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+        </div>
+
+        <div
+          class="group border border-white/5 rounded-xl p-6 md:p-8 flex items-center justify-between hover:border-neonGreen/30 transition-all duration-500 hover-target reveal-up cursor-pointer">
+          <div class="flex items-center gap-6">
+            <span class="text-white/20 text-sm font-mono w-8">03</span>
+            <div>
+              <h3
+                class="heading text-lg md:text-xl text-white group-hover:text-neonGreen transition-colors duration-300">
+                Brand Strategist</h3>
+              <div class="flex items-center gap-4 mt-2">
+                <span class="text-white/30 text-xs">Tokyo</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">Full-time</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">$110K–$150K</span>
+              </div>
+            </div>
+          </div>
+          <i data-lucide="arrow-up-right"
+            class="w-5 h-5 text-white/20 group-hover:text-neonGreen transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+        </div>
+
+        <div
+          class="group border border-white/5 rounded-xl p-6 md:p-8 flex items-center justify-between hover:border-neonGreen/30 transition-all duration-500 hover-target reveal-up cursor-pointer">
+          <div class="flex items-center gap-6">
+            <span class="text-white/20 text-sm font-mono w-8">04</span>
+            <div>
+              <h3
+                class="heading text-lg md:text-xl text-white group-hover:text-neonGreen transition-colors duration-300">
+                3D Artist / Generalist</h3>
+              <div class="flex items-center gap-4 mt-2">
+                <span class="text-white/30 text-xs">New York</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">Contract</span>
+                <span class="text-white/10">•</span>
+                <span class="text-white/30 text-xs">$90K–$120K</span>
+              </div>
+            </div>
+          </div>
+          <i data-lucide="arrow-up-right"
+            class="w-5 h-5 text-white/20 group-hover:text-neonGreen transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CONTACT / CTA ==================== -->
+  <section id="contact" class="relative py-40 px-6 md:px-12 overflow-hidden">
+    <!-- Background glow -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="w-[600px] h-[600px] rounded-full bg-neonCyan/5 blur-[150px]"></div>
+    </div>
+    <div class="absolute top-1/2 left-1/4 pointer-events-none">
+      <div class="w-[400px] h-[400px] rounded-full bg-neonPurple/5 blur-[120px]"></div>
+    </div>
+
+    <div class="max-w-[1000px] mx-auto text-center relative z-10">
+      <span class="section-label text-neonCyan reveal-up">10 — Contact</span>
+      <h2 class="display-xl text-[48px] md:text-[80px] lg:text-[110px] text-white mt-6 mb-8 reveal-up">
+        Let's Build<br>Something <span class="text-neonCyan glow-text-cyan">Epic</span>
+      </h2>
+      <p class="text-white/50 text-lg md:text-xl font-light max-w-[600px] mx-auto mb-12 reveal-up">
+        Have a project in mind? We'd love to hear about it. Drop us a line and let's create something extraordinary
+        together.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal-up">
+        <a href="mailto:hello@axiom.studio"
+          class="magnetic-btn rounded-full bg-neonCyan text-void px-10 py-5 text-sm font-bold uppercase tracking-[0.1em] hover-target overflow-hidden glow-cyan">
+          <span class="btn-text">Start a Project</span>
+        </a>
+        <a href="mailto:careers@axiom.studio"
+          class="magnetic-btn rounded-full border border-white/20 px-10 py-5 text-sm font-bold uppercase tracking-[0.1em] text-white hover-target overflow-hidden">
+          <span class="btn-bg bg-white"></span>
+          <span class="btn-text">Join Us</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-white/5 py-20 px-6 md:px-12">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div>
+          <a href="#hero" class="font-display text-2xl font-bold text-white hover-target">AXIOM<span
+              class="text-neonCyan">.</span></a>
+          <p class="text-white/30 text-sm mt-4 leading-relaxed">Award-winning creative studio crafting immersive digital
+            experiences since 2019.</p>
+        </div>
+        <div>
+          <h5 class="text-xs font-bold uppercase tracking-[0.15em] text-white/50 mb-4">Navigation</h5>
+          <div class="flex flex-col gap-3">
+            <a href="#projects"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Projects</a>
+            <a href="#services"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Services</a>
+            <a href="#studio"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Studio</a>
+            <a href="#team"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Team</a>
+            <a href="#careers"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Careers</a>
+          </div>
+        </div>
+        <div>
+          <h5 class="text-xs font-bold uppercase tracking-[0.15em] text-white/50 mb-4">Social</h5>
+          <div class="flex flex-col gap-3">
+            <a href="#"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Instagram</a>
+            <a href="#"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Twitter / X</a>
+            <a href="#"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Dribbble</a>
+            <a href="#"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">LinkedIn</a>
+            <a href="#"
+              class="text-white/40 hover:text-white text-sm transition-colors duration-300 hover-target">Behance</a>
+          </div>
+        </div>
+        <div>
+          <h5 class="text-xs font-bold uppercase tracking-[0.15em] text-white/50 mb-4">Contact</h5>
+          <div class="flex flex-col gap-3">
+            <a href="mailto:hello@axiom.studio"
+              class="text-white/40 hover:text-neonCyan text-sm transition-colors duration-300 hover-target">hello@axiom.studio</a>
+            <span class="text-white/30 text-sm">New York, NY</span>
+            <span class="text-white/30 text-sm">Tokyo, JP</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/5">
+        <p class="text-white/20 text-xs">© 2024 Axiom Studio. All rights reserved.</p>
+        <div class="flex items-center gap-6 mt-4 md:mt-0">
+          <a href="#" class="text-white/20 hover:text-white/50 text-xs transition-colors hover-target">Privacy</a>
+          <a href="#" class="text-white/20 hover:text-white/50 text-xs transition-colors hover-target">Terms</a>
+          <a href="#" class="text-white/20 hover:text-white/50 text-xs transition-colors hover-target">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== PROJECT PREVIEW MODAL ==================== -->
+  <div class="project-preview" id="projectPreview">
+    <div class="p-6 md:p-12">
+      <button
+        class="fixed top-6 right-6 md:top-10 md:right-10 z-50 w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-neonCyan hover:text-neonCyan transition-all duration-300 hover-target"
+        id="closePreview">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="max-w-[1200px] mx-auto pt-20">
+        <span class="section-label text-neonCyan" id="previewCategory">Branding / Web</span>
+        <h2 class="display-lg text-4xl md:text-6xl lg:text-8xl text-white mt-4 mb-8" id="previewTitle">Nebula Finance
+        </h2>
+        <p class="text-white/50 text-lg font-light max-w-[600px] mb-12" id="previewDesc">Redefining digital banking
+          through immersive design and cutting-edge technology.</p>
+        <div class="rounded-2xl overflow-hidden mb-12">
+          <img src="https://picsum.photos/seed/preview-main/1200/700.jpg" alt="Project" class="w-full h-auto"
+            id="previewImage">
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div class="rounded-xl overflow-hidden aspect-square">
+            <img src="https://picsum.photos/seed/preview-1/400/400.jpg" alt="" class="w-full h-full object-cover">
+          </div>
+          <div class="rounded-xl overflow-hidden aspect-square">
+            <img src="https://picsum.photos/seed/preview-2/400/400.jpg" alt="" class="w-full h-full object-cover">
+          </div>
+          <div class="rounded-xl overflow-hidden aspect-square">
+            <img src="https://picsum.photos/seed/preview-3/400/400.jpg" alt="" class="w-full h-full object-cover">
+          </div>
+          <div class="rounded-xl overflow-hidden aspect-square">
+            <img src="https://picsum.photos/seed/preview-4/400/400.jpg" alt="" class="w-full h-full object-cover">
+          </div>
+        </div>
+        <div class="text-center py-12">
+          <a href="#"
+            class="magnetic-btn inline-flex items-center gap-3 bg-neonCyan text-void rounded-full px-8 py-4 text-sm font-bold uppercase tracking-[0.1em] hover-target overflow-hidden">
+            <span class="btn-text">Visit Live Site</span>
+            <i data-lucide="external-link" class="w-4 h-4 btn-text"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== INITIALIZATION ====================
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Lenis Smooth Scroll
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      smoothTouch: false,
+      touchMultiplier: 2,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+
+    // ==================== PRELOADER ====================
+    const preloaderFill = document.getElementById('preloaderFill');
+    const preloader = document.getElementById('preloader');
+    let loadProgress = 0;
+
+    const preloaderInterval = setInterval(() => {
+      loadProgress += Math.random() * 15;
+      if (loadProgress >= 100) {
+        loadProgress = 100;
+        clearInterval(preloaderInterval);
+        setTimeout(() => {
+          gsap.to(preloader, {
+            y: '-100%',
+            duration: 1,
+            ease: 'power4.inOut',
+            onComplete: () => {
+              preloader.style.display = 'none';
+              animateHero();
+            }
+          });
+        }, 300);
+      }
+      preloaderFill.style.width = loadProgress + '%';
+    }, 100);
+
+    // ==================== CUSTOM CURSOR ====================
+    const cursorDot = document.getElementById('cursorDot');
+    const cursorRing = document.getElementById('cursorRing');
+    let mouseX = 0, mouseY = 0;
+    let ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorDot.style.left = mouseX - 4 + 'px';
+      cursorDot.style.top = mouseY - 4 + 'px';
+    });
+
+    function animateCursor() {
+      ringX += (mouseX - ringX) * 0.12;
+      ringY += (mouseY - ringY) * 0.12;
+      cursorRing.style.left = ringX - 20 + 'px';
+      cursorRing.style.top = ringY - 20 + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Hover targets
+    document.querySelectorAll('.hover-target, a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => cursorRing.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursorRing.classList.remove('hovering'));
+    });
+
+    // Hide cursor on mobile
+    if ('ontouchstart' in window) {
+      cursorDot.style.display = 'none';
+      cursorRing.style.display = 'none';
+      document.body.style.cursor = 'auto';
+    }
+
+    // ==================== HERO ANIMATION ====================
+    function animateHero() {
+      const tl = gsap.timeline();
+
+      tl.to('.hero-line', {
+        y: 0,
+        duration: 1.2,
+        ease: 'power4.out',
+        stagger: 0.15
+      })
+        .to('.hero-subtitle', {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out'
+        }, '-=0.6')
+        .to('.hero-cta', {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power3.out'
+        }, '-=0.7')
+        .to('.hero-scroll', {
+          opacity: 1,
+          duration: 0.8,
+          ease: 'power2.out'
+        }, '-=0.4');
+    }
+
+    // Mouse parallax on hero
+    const heroContent = document.getElementById('heroContent');
+    document.getElementById('hero')?.addEventListener('mousemove', (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+      gsap.to(heroContent, {
+        x: x * 20,
+        y: y * 10,
+        duration: 1,
+        ease: 'power2.out'
+      });
+    });
+
+    // ==================== SCROLL ANIMATIONS ====================
+    // Reveal Up
+    gsap.utils.toArray('.reveal-up').forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        },
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power3.out'
+      });
+    });
+
+    // Reveal Scale
+    gsap.utils.toArray('.reveal-scale').forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        },
+        opacity: 1,
+        scale: 1,
+        duration: 1.2,
+        ease: 'power3.out'
+      });
+    });
+
+    // ==================== HORIZONTAL SCROLL ====================
+    const horizontalTrack = document.getElementById('horizontalTrack');
+    if (horizontalTrack) {
+      const totalWidth = horizontalTrack.scrollWidth - window.innerWidth;
+
+      gsap.to(horizontalTrack, {
+        x: -totalWidth,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.horizontal-section',
+          start: 'top top',
+          end: () => '+=' + totalWidth,
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+        }
+      });
+    }
+
+    // ==================== COUNTER ANIMATION ====================
+    document.querySelectorAll('.counter-value').forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-target'));
+
+      ScrollTrigger.create({
+        trigger: counter,
+        start: 'top 85%',
+        onEnter: () => {
+          gsap.to(counter, {
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: function () {
+              counter.textContent = Math.round(this.progress() * target) + '+';
+            }
+          });
+        },
+        once: true
+      });
+    });
+
+    // ==================== SERVICE BLOCK MOUSE TRACKING ====================
+    document.querySelectorAll('.service-block').forEach(block => {
+      block.addEventListener('mousemove', (e) => {
+        const rect = block.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        block.style.setProperty('--mouse-x', x + '%');
+        block.style.setProperty('--mouse-y', y + '%');
+      });
+    });
+
+    // ==================== MAGNETIC BUTTONS ====================
+    document.querySelectorAll('.magnetic-btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        gsap.to(btn, {
+          x: x * 0.3,
+          y: y * 0.3,
+          duration: 0.4,
+          ease: 'power2.out'
+        });
+
+        const btnText = btn.querySelector('.btn-text');
+        if (btnText) {
+          gsap.to(btnText, {
+            x: x * 0.15,
+            y: y * 0.15,
+            duration: 0.4,
+            ease: 'power2.out'
+          });
+        }
+
+        const btnBg = btn.querySelector('.btn-bg');
+        if (btnBg) {
+          gsap.to(btnBg, {
+            x: x * 0.1,
+            y: y * 0.1,
+            duration: 0.4,
+            ease: 'power2.out'
+          });
+        }
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
+        const btnText = btn.querySelector('.btn-text');
+        if (btnText) gsap.to(btnText, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
+        const btnBg = btn.querySelector('.btn-bg');
+        if (btnBg) gsap.to(btnBg, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
+      });
+    });
+
+    // ==================== MOBILE MENU ====================
+    const menuToggle = document.getElementById('menuToggle');
+    const navOverlay = document.getElementById('navOverlay');
+    let menuOpen = false;
+
+    menuToggle?.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      navOverlay.classList.toggle('active');
+      if (menuOpen) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    });
+
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        menuOpen = false;
+        navOverlay.classList.remove('active');
+        lenis.start();
+      });
+    });
+
+    // ==================== SMOOTH NAV SCROLL ====================
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          lenis.scrollTo(target, { offset: -80, duration: 1.5 });
+        }
+      });
+    });
+
+    // ==================== PROJECT PREVIEW MODAL ====================
+    const projectPreview = document.getElementById('projectPreview');
+    const closePreview = document.getElementById('closePreview');
+
+    const projectData = {
+      1: { cat: 'Branding / Web', title: 'Nebula Finance', desc: 'Redefining digital banking through immersive design and cutting-edge technology. A complete brand overhaul and web platform.', img: 'preview-nebula' },
+      2: { cat: 'Product / UX', title: 'Aurora Labs', desc: 'AI-powered creative platform for enterprises. Building the future of generative design.', img: 'preview-aurora' },
+      3: { cat: 'E-Commerce / Motion', title: 'Zenith Collective', desc: 'Where luxury fashion meets digital innovation. An immersive shopping experience.', img: 'preview-zenith' },
+      4: { cat: 'App / Development', title: 'Vertex Health', desc: 'Transforming healthcare with intuitive design and seamless patient experiences.', img: 'preview-vertex' },
+      5: { cat: 'Branding', title: 'Obsidian Studios', desc: 'A bold new identity for a production studio pushing creative boundaries.', img: 'preview-obsidian' },
+      6: { cat: 'Web Design', title: 'Prism Analytics', desc: 'Data visualization reimagined through elegant, intuitive interfaces.', img: 'preview-prism' },
+      7: { cat: 'Product', title: 'Flux Music', desc: 'Next-generation music streaming with spatial audio and social features.', img: 'preview-flux' },
+      8: { cat: 'Motion', title: 'Kinetic Type', desc: 'An experimental typography project exploring motion and meaning.', img: 'preview-kinetic' },
+      9: { cat: 'Web Design', title: 'Echo Platform', desc: 'Community-driven platform for audio creators and podcasters.', img: 'preview-echo' },
+      10: { cat: 'Branding', title: 'Nova Collective', desc: 'Brand identity for a next-generation creative agency network.', img: 'preview-nova' },
+    };
+
+    document.querySelectorAll('[data-project]').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-project');
+        const data = projectData[id];
+        if (data) {
+          document.getElementById('previewCategory').textContent = data.cat;
+          document.getElementById('previewTitle').textContent = data.title;
+          document.getElementById('previewDesc').textContent = data.desc;
+          document.getElementById('previewImage').src = `https://picsum.photos/seed/${data.img}/1200/700.jpg`;
+          projectPreview.classList.add('active');
+          lenis.stop();
+        }
+      });
+    });
+
+    closePreview?.addEventListener('click', () => {
+      projectPreview.classList.remove('active');
+      lenis.start();
+    });
+
+    // ==================== FILTER BUTTONS ====================
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('active');
+          b.classList.remove('bg-white', 'text-void');
+          b.classList.add('border', 'border-white/10', 'text-white/50');
+        });
+        btn.classList.add('active', 'bg-white', 'text-void');
+        btn.classList.remove('border', 'border-white/10', 'text-white/50');
+
+        // Animate masonry items
+        const items = document.querySelectorAll('.masonry-item');
+        items.forEach((item, i) => {
+          gsap.fromTo(item,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, delay: i * 0.1, ease: 'power3.out' }
+          );
+        });
+      });
+    });
+
+    // ==================== PARALLAX ON SECTIONS ====================
+    gsap.utils.toArray('.showcase-image').forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1
+        },
+        y: -60,
+        ease: 'none'
+      });
+    });
+
+    // ==================== NAV BACKGROUND ON SCROLL ====================
+    const mainNav = document.getElementById('mainNav');
+    ScrollTrigger.create({
+      start: 'top -100',
+      onUpdate: (self) => {
+        if (self.direction === 1 && self.scroll() > 100) {
+          mainNav.style.backdropFilter = 'blur(20px)';
+          mainNav.style.background = 'rgba(3,3,3,0.7)';
+        } else if (self.scroll() <= 100) {
+          mainNav.style.backdropFilter = 'none';
+          mainNav.style.background = 'transparent';
+        }
+      }
+    });
+
+    // ==================== TEXT SPLIT ANIMATION ====================
+    document.querySelectorAll('.display-xl, .display-lg').forEach(el => {
+      if (el.closest('#heroContent')) return; // Skip hero, handled separately
+
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        onEnter: () => {
+          gsap.fromTo(el,
+            { opacity: 0, y: 40 },
+            { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }
+          );
+        },
+        once: true
+      });
+    });
+
+    // ==================== LUCIDE ICONS ====================
+    lucide.createIcons();
+
+    // ==================== PAGE VISIBILITY ====================
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    });
+
+    // ==================== RESIZE HANDLER ====================
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 250);
+    });
+  </script>
+</body>
+
+</html>

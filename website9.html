@@ -1,0 +1,2529 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexBank — Modern Banking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            },
+            dark: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glow-blue {
+      box-shadow: 0 0 40px rgba(37, 99, 235, 0.15), 0 0 80px rgba(37, 99, 235, 0.08);
+    }
+
+    .dark .glow-blue {
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.2), 0 0 80px rgba(59, 130, 246, 0.1);
+    }
+
+    .glow-card:hover {
+      box-shadow: 0 20px 60px rgba(37, 99, 235, 0.15), 0 0 0 1px rgba(37, 99, 235, 0.1);
+    }
+
+    .dark .glow-card:hover {
+      box-shadow: 0 20px 60px rgba(59, 130, 246, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.15);
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes float-delayed {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        opacity: 0.4;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slide-in-right {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes count-up {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes chart-draw {
+      from {
+        stroke-dashoffset: 500;
+      }
+
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    @keyframes rotate-slow {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes bar-grow {
+      from {
+        transform: scaleY(0);
+      }
+
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .animate-float-delayed {
+      animation: float-delayed 5s ease-in-out infinite 1s;
+    }
+
+    .animate-pulse-glow {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .animate-slide-up {
+      animation: slide-up 0.8s ease-out forwards;
+    }
+
+    .animate-slide-in-right {
+      animation: slide-in-right 0.8s ease-out forwards;
+    }
+
+    .animate-rotate-slow {
+      animation: rotate-slow 20s linear infinite;
+    }
+
+    .chart-line {
+      stroke-dasharray: 500;
+      stroke-dashoffset: 500;
+      animation: chart-draw 2s ease-out forwards;
+    }
+
+    .bar-animate {
+      transform-origin: bottom;
+      animation: bar-grow 1s ease-out forwards;
+    }
+
+    .shimmer-bg {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite;
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #2563eb;
+      transition: width 0.3s ease;
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .card-hover {
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .card-hover:hover {
+      transform: translateY(-6px);
+    }
+
+    .transaction-row {
+      transition: all 0.2s ease;
+    }
+
+    .transaction-row:hover {
+      background: rgba(37, 99, 235, 0.04);
+    }
+
+    .dark .transaction-row:hover {
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-gradient {
+      background: radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 50%);
+    }
+
+    .dark .hero-gradient {
+      background: radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+    }
+
+    .dashboard-sidebar-link {
+      transition: all 0.2s ease;
+    }
+
+    .dashboard-sidebar-link:hover,
+    .dashboard-sidebar-link.active {
+      background: rgba(37, 99, 235, 0.08);
+      color: #2563eb;
+    }
+
+    .dark .dashboard-sidebar-link:hover,
+    .dark .dashboard-sidebar-link.active {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: #cbd5e1;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-switch.active {
+      background: #2563eb;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s ease;
+    }
+
+    .toggle-switch.active::after {
+      transform: translateX(20px);
+    }
+  </style>
+</head>
+
+<body class="font-sans bg-white text-dark-900 dark:bg-dark-950 dark:text-dark-100 transition-colors duration-300">
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        <!-- Logo -->
+        <a href="#" onclick="navigateTo('home')" class="flex items-center gap-2 group">
+          <div
+            class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <span class="iconify text-white text-lg" data-icon="lucide:landmark"></span>
+          </div>
+          <span class="text-xl font-bold tracking-tight">Nex<span class="text-brand-600">Bank</span></span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden lg:flex items-center gap-1">
+          <a onclick="navigateTo('home')"
+            class="nav-link px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-brand-600 dark:hover:text-brand-400 cursor-pointer transition-colors"
+            data-nav="home">Home</a>
+          <a onclick="navigateTo('personal')"
+            class="nav-link px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-brand-600 dark:hover:text-brand-400 cursor-pointer transition-colors"
+            data-nav="personal">Personal</a>
+          <a onclick="navigateTo('business')"
+            class="nav-link px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-brand-600 dark:hover:text-brand-400 cursor-pointer transition-colors"
+            data-nav="business">Business</a>
+          <a onclick="navigateTo('pricing')"
+            class="nav-link px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-brand-600 dark:hover:text-brand-400 cursor-pointer transition-colors"
+            data-nav="pricing">Pricing</a>
+          <a onclick="navigateTo('security')"
+            class="nav-link px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-brand-600 dark:hover:text-brand-400 cursor-pointer transition-colors"
+            data-nav="security">Security</a>
+          <a onclick="navigateTo('support')"
+            class="nav-link px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-brand-600 dark:hover:text-brand-400 cursor-pointer transition-colors"
+            data-nav="support">Support</a>
+        </div>
+
+        <!-- Right Actions -->
+        <div class="flex items-center gap-3">
+          <button onclick="toggleDarkMode()"
+            class="p-2 rounded-xl hover:bg-dark-100 dark:hover:bg-dark-800 transition-colors" title="Toggle dark mode">
+            <span class="iconify text-xl dark:hidden" data-icon="lucide:moon"></span>
+            <span class="iconify text-xl hidden dark:inline" data-icon="lucide:sun"></span>
+          </button>
+          <a onclick="navigateTo('login')"
+            class="hidden sm:inline-flex px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:text-brand-600 cursor-pointer transition-colors"
+            data-nav="login">Log in</a>
+          <a onclick="navigateTo('signup')"
+            class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand-600/25 cursor-pointer"
+            data-nav="signup">Get Started</a>
+          <button onclick="toggleMobileMenu()"
+            class="lg:hidden p-2 rounded-xl hover:bg-dark-100 dark:hover:bg-dark-800 transition-colors">
+            <span class="iconify text-xl" data-icon="lucide:menu"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu"
+      class="lg:hidden hidden bg-white/95 dark:bg-dark-900/95 backdrop-blur-xl border-t border-dark-200 dark:border-dark-700">
+      <div class="px-4 py-4 space-y-1">
+        <a onclick="navigateTo('home');toggleMobileMenu()"
+          class="block px-4 py-3 rounded-xl text-sm font-medium hover:bg-brand-50 dark:hover:bg-dark-800 cursor-pointer">Home</a>
+        <a onclick="navigateTo('personal');toggleMobileMenu()"
+          class="block px-4 py-3 rounded-xl text-sm font-medium hover:bg-brand-50 dark:hover:bg-dark-800 cursor-pointer">Personal
+          Banking</a>
+        <a onclick="navigateTo('business');toggleMobileMenu()"
+          class="block px-4 py-3 rounded-xl text-sm font-medium hover:bg-brand-50 dark:hover:bg-dark-800 cursor-pointer">Business
+          Banking</a>
+        <a onclick="navigateTo('pricing');toggleMobileMenu()"
+          class="block px-4 py-3 rounded-xl text-sm font-medium hover:bg-brand-50 dark:hover:bg-dark-800 cursor-pointer">Pricing</a>
+        <a onclick="navigateTo('security');toggleMobileMenu()"
+          class="block px-4 py-3 rounded-xl text-sm font-medium hover:bg-brand-50 dark:hover:bg-dark-800 cursor-pointer">Security</a>
+        <a onclick="navigateTo('support');toggleMobileMenu()"
+          class="block px-4 py-3 rounded-xl text-sm font-medium hover:bg-brand-50 dark:hover:bg-dark-800 cursor-pointer">Support</a>
+        <div class="pt-3 border-t border-dark-200 dark:border-dark-700 flex gap-3">
+          <a onclick="navigateTo('login');toggleMobileMenu()"
+            class="flex-1 text-center px-4 py-3 rounded-xl text-sm font-medium border border-dark-200 dark:border-dark-700 cursor-pointer">Log
+            in</a>
+          <a onclick="navigateTo('signup');toggleMobileMenu()"
+            class="flex-1 text-center px-4 py-3 rounded-xl text-sm font-semibold bg-brand-600 text-white cursor-pointer">Sign
+            up</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== HOME PAGE ==================== -->
+  <div id="page-home" class="page-section active">
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen hero-gradient overflow-hidden">
+      <!-- Decorative Elements -->
+      <div class="absolute top-20 right-10 w-72 h-72 bg-brand-400/10 rounded-full blur-3xl animate-pulse-glow"></div>
+      <div class="absolute bottom-20 left-10 w-96 h-96 bg-cyan-400/8 rounded-full blur-3xl animate-pulse-glow"
+        style="animation-delay:1.5s"></div>
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-brand-200/20 dark:border-brand-800/10 rounded-full animate-rotate-slow">
+      </div>
+
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 lg:pt-40 pb-20">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <!-- Left Content -->
+          <div class="animate-slide-up">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-brand-50 dark:bg-brand-900/30 rounded-full mb-8">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span class="text-xs font-semibold text-brand-700 dark:text-brand-300 uppercase tracking-wider">Trusted by
+                12M+ users</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
+              Banking made<br>
+              <span class="gradient-text">effortless</span> and<br>
+              secure
+            </h1>
+
+            <p class="text-lg lg:text-xl text-dark-500 dark:text-dark-400 leading-relaxed mb-10 max-w-lg">
+              Send, spend, and save smarter. Experience borderless banking with zero hidden fees and real-time
+              transactions across 180+ countries.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 mb-12">
+              <a onclick="navigateTo('signup')"
+                class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-xl hover:shadow-brand-600/25 cursor-pointer group">
+                Open Free Account
+                <span class="iconify group-hover:translate-x-1 transition-transform duration-300"
+                  data-icon="lucide:arrow-right"></span>
+              </a>
+              <a
+                class="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-dark-200 dark:border-dark-700 hover:border-brand-300 dark:hover:border-brand-700 font-semibold rounded-2xl transition-all duration-300 cursor-pointer">
+                <span class="iconify" data-icon="lucide:play-circle"></span>
+                Watch Demo
+              </a>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="flex items-center gap-6 text-sm text-dark-400 dark:text-dark-500">
+              <div class="flex items-center gap-1.5">
+                <span class="iconify text-green-500" data-icon="lucide:shield-check"></span>
+                <span>Bank-grade security</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="iconify text-green-500" data-icon="lucide:zap"></span>
+                <span>Instant transfers</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="iconify text-green-500" data-icon="lucide:lock"></span>
+                <span>FDIC insured</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right - Card Mockup -->
+          <div class="relative animate-slide-in-right" style="animation-delay: 0.3s">
+            <!-- Main Card -->
+            <div class="animate-float">
+              <div class="relative w-full max-w-md mx-auto">
+                <div
+                  class="bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 rounded-3xl p-8 text-white shadow-2xl glow-blue">
+                  <div class="flex justify-between items-start mb-12">
+                    <div>
+                      <p class="text-brand-200 text-sm font-medium">Total Balance</p>
+                      <p class="text-3xl font-bold mt-1">$24,562.80</p>
+                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                      <span class="iconify text-2xl" data-icon="lucide:credit-card"></span>
+                    </div>
+                  </div>
+                  <div class="mb-8">
+                    <p class="text-brand-200 text-xs font-medium tracking-widest uppercase mb-2">Card Number</p>
+                    <p class="text-lg font-mono tracking-wider">•••• •••• •••• 4829</p>
+                  </div>
+                  <div class="flex justify-between">
+                    <div>
+                      <p class="text-brand-200 text-xs font-medium tracking-widest uppercase mb-1">Card Holder</p>
+                      <p class="text-sm font-semibold">ALEX MORRISON</p>
+                    </div>
+                    <div>
+                      <p class="text-brand-200 text-xs font-medium tracking-widest uppercase mb-1">Expires</p>
+                      <p class="text-sm font-semibold">09/28</p>
+                    </div>
+                  </div>
+                  <!-- Card shine effect -->
+                  <div class="absolute inset-0 rounded-3xl shimmer-bg pointer-events-none"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Transaction Cards -->
+            <div class="absolute -left-4 top-8 animate-float-delayed">
+              <div class="glass-card rounded-2xl p-4 shadow-xl flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-green-600 dark:text-green-400" data-icon="lucide:arrow-down-left"></span>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold">Received</p>
+                  <p class="text-sm font-bold text-green-600 dark:text-green-400">+$2,450.00</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="absolute -right-4 bottom-16 animate-float" style="animation-delay: 2s">
+              <div class="glass-card rounded-2xl p-4 shadow-xl flex items-center gap-3">
+                <div class="w-10 h-10 bg-brand-100 dark:bg-brand-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-brand-600 dark:text-brand-400" data-icon="lucide:arrow-up-right"></span>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold">Sent</p>
+                  <p class="text-sm font-bold text-brand-600 dark:text-brand-400">-$890.00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="relative -mt-1 bg-brand-600 dark:bg-brand-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-white text-center">
+          <div>
+            <p class="text-2xl lg:text-3xl font-bold">12M+</p>
+            <p class="text-brand-200 text-sm mt-1">Active Users</p>
+          </div>
+          <div>
+            <p class="text-2xl lg:text-3xl font-bold">$50B+</p>
+            <p class="text-brand-200 text-sm mt-1">Transactions</p>
+          </div>
+          <div>
+            <p class="text-2xl lg:text-3xl font-bold">180+</p>
+            <p class="text-brand-200 text-sm mt-1">Countries</p>
+          </div>
+          <div>
+            <p class="text-2xl lg:text-3xl font-bold">30+</p>
+            <p class="text-brand-200 text-sm mt-1">Currencies</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transaction Preview Cards -->
+    <section class="py-24 bg-dark-50 dark:bg-dark-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-4">Transactions</span>
+          <h2 class="text-3xl lg:text-5xl font-bold tracking-tight">Lightning-fast transfers</h2>
+          <p class="text-dark-500 dark:text-dark-400 mt-4 text-lg max-w-2xl mx-auto">Send money anywhere in the world in
+            seconds, not days. No hidden fees, no complicated processes.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <!-- Transaction Card 1 -->
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-brand-600 dark:text-brand-400" data-icon="lucide:send"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Send Money</h3>
+            <p class="text-dark-500 dark:text-dark-400 mb-6 leading-relaxed">Transfer to friends, family, or businesses
+              worldwide with real-time exchange rates.</p>
+            <div class="flex items-center gap-3 p-4 bg-dark-50 dark:bg-dark-700 rounded-2xl">
+              <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                <span class="iconify text-green-600" data-icon="lucide:check-circle"></span>
+              </div>
+              <div>
+                <p class="text-xs text-dark-400">To Sarah K.</p>
+                <p class="text-sm font-bold">€1,200.00 — Sent</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction Card 2 -->
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-cyan-50 dark:bg-cyan-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-cyan-600 dark:text-cyan-400" data-icon="lucide:receipt"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Request Payments</h3>
+            <p class="text-dark-500 dark:text-dark-400 mb-6 leading-relaxed">Split bills, invoice clients, or request
+              money with a simple link or QR code.</p>
+            <div class="flex items-center gap-3 p-4 bg-dark-50 dark:bg-dark-700 rounded-2xl">
+              <div class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                <span class="iconify text-amber-600" data-icon="lucide:clock"></span>
+              </div>
+              <div>
+                <p class="text-xs text-dark-400">From Mike R.</p>
+                <p class="text-sm font-bold">$350.00 — Pending</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction Card 3 -->
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-violet-50 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-violet-600 dark:text-violet-400" data-icon="lucide:repeat"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Auto Exchange</h3>
+            <p class="text-dark-500 dark:text-dark-400 mb-6 leading-relaxed">Automatically convert currencies at the
+              best rates. Save up to 8x vs traditional banks.</p>
+            <div class="flex items-center gap-3 p-4 bg-dark-50 dark:bg-dark-700 rounded-2xl">
+              <div class="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-xl flex items-center justify-center">
+                <span class="iconify text-violet-600" data-icon="lucide:arrow-left-right"></span>
+              </div>
+              <div>
+                <p class="text-xs text-dark-400">USD → EUR</p>
+                <p class="text-sm font-bold">Rate: 0.9234</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Financial Analytics Section -->
+    <section class="py-24 bg-white dark:bg-dark-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <span
+              class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-4">Analytics</span>
+            <h2 class="text-3xl lg:text-5xl font-bold tracking-tight mb-6">Smart insights for your money</h2>
+            <p class="text-dark-500 dark:text-dark-400 text-lg leading-relaxed mb-8">Understand your spending habits
+              with AI-powered analytics. Get personalized recommendations to save more and spend wisely.</p>
+
+            <div class="space-y-4">
+              <div
+                class="flex items-start gap-4 p-4 rounded-2xl hover:bg-brand-50 dark:hover:bg-dark-800 transition-colors">
+                <div
+                  class="w-10 h-10 bg-brand-100 dark:bg-brand-900/30 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="iconify text-brand-600" data-icon="lucide:pie-chart"></span>
+                </div>
+                <div>
+                  <h4 class="font-semibold mb-1">Spending Breakdown</h4>
+                  <p class="text-sm text-dark-500 dark:text-dark-400">Categorized view of where your money goes each
+                    month</p>
+                </div>
+              </div>
+              <div
+                class="flex items-start gap-4 p-4 rounded-2xl hover:bg-brand-50 dark:hover:bg-dark-800 transition-colors">
+                <div
+                  class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="iconify text-green-600" data-icon="lucide:trending-up"></span>
+                </div>
+                <div>
+                  <h4 class="font-semibold mb-1">Savings Goals</h4>
+                  <p class="text-sm text-dark-500 dark:text-dark-400">Track progress towards your financial goals
+                    automatically</p>
+                </div>
+              </div>
+              <div
+                class="flex items-start gap-4 p-4 rounded-2xl hover:bg-brand-50 dark:hover:bg-dark-800 transition-colors">
+                <div
+                  class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="iconify text-amber-600" data-icon="lucide:bell-ring"></span>
+                </div>
+                <div>
+                  <h4 class="font-semibold mb-1">Smart Alerts</h4>
+                  <p class="text-sm text-dark-500 dark:text-dark-400">Get notified about unusual spending, bill
+                    reminders, and more</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Chart Mockup -->
+          <div
+            class="bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700 shadow-xl glow-blue">
+            <div class="flex items-center justify-between mb-8">
+              <div>
+                <p class="text-sm text-dark-400">Monthly Spending</p>
+                <p class="text-2xl font-bold">$4,280.50</p>
+              </div>
+              <div class="flex gap-2">
+                <button class="px-3 py-1.5 text-xs font-semibold bg-brand-600 text-white rounded-lg">Month</button>
+                <button
+                  class="px-3 py-1.5 text-xs font-semibold text-dark-400 hover:bg-dark-100 dark:hover:bg-dark-700 rounded-lg transition-colors">Year</button>
+              </div>
+            </div>
+
+            <!-- SVG Chart -->
+            <div class="relative h-48 mb-6">
+              <svg viewBox="0 0 400 150" class="w-full h-full">
+                <defs>
+                  <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2563eb;stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:#2563eb;stop-opacity:0" />
+                  </linearGradient>
+                </defs>
+                <!-- Grid lines -->
+                <line x1="0" y1="37" x2="400" y2="37" stroke="currentColor" stroke-width="0.5"
+                  class="text-dark-100 dark:text-dark-700" />
+                <line x1="0" y1="75" x2="400" y2="75" stroke="currentColor" stroke-width="0.5"
+                  class="text-dark-100 dark:text-dark-700" />
+                <line x1="0" y1="112" x2="400" y2="112" stroke="currentColor" stroke-width="0.5"
+                  class="text-dark-100 dark:text-dark-700" />
+                <!-- Area fill -->
+                <path
+                  d="M0,120 C30,100 60,80 100,90 C140,100 160,40 200,50 C240,60 260,30 300,45 C340,60 370,25 400,35 L400,150 L0,150Z"
+                  fill="url(#chartGradient)" />
+                <!-- Line -->
+                <path d="M0,120 C30,100 60,80 100,90 C140,100 160,40 200,50 C240,60 260,30 300,45 C340,60 370,25 400,35"
+                  fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" class="chart-line" />
+                <!-- Dot -->
+                <circle cx="300" cy="45" r="5" fill="#2563eb" class="animate-pulse" />
+                <circle cx="300" cy="45" r="8" fill="#2563eb" opacity="0.2" class="animate-pulse" />
+              </svg>
+            </div>
+
+            <!-- Spending Categories -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-3 h-3 rounded-full bg-brand-500"></div>
+                  <span class="text-sm">Shopping</span>
+                </div>
+                <span class="text-sm font-semibold">$1,840</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
+                  <span class="text-sm">Food & Dining</span>
+                </div>
+                <span class="text-sm font-semibold">$980</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-3 h-3 rounded-full bg-violet-500"></div>
+                  <span class="text-sm">Transport</span>
+                </div>
+                <span class="text-sm font-semibold">$620</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                  <span class="text-sm">Entertainment</span>
+                </div>
+                <span class="text-sm font-semibold">$840</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security Features -->
+    <section class="py-24 bg-dark-50 dark:bg-dark-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-4">Security</span>
+          <h2 class="text-3xl lg:text-5xl font-bold tracking-tight">Your money is safe with us</h2>
+          <p class="text-dark-500 dark:text-dark-400 mt-4 text-lg max-w-2xl mx-auto">Bank-grade encryption, 24/7 fraud
+            monitoring, and FDIC insurance up to $250,000.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div
+            class="card-hover bg-white dark:bg-dark-800 rounded-3xl p-8 text-center border border-dark-100 dark:border-dark-700">
+            <div
+              class="w-16 h-16 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <span class="iconify text-3xl text-brand-600 dark:text-brand-400" data-icon="lucide:shield"></span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">256-bit Encryption</h3>
+            <p class="text-sm text-dark-500 dark:text-dark-400">Military-grade encryption protects all your data and
+              transactions</p>
+          </div>
+          <div
+            class="card-hover bg-white dark:bg-dark-800 rounded-3xl p-8 text-center border border-dark-100 dark:border-dark-700">
+            <div
+              class="w-16 h-16 bg-green-50 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <span class="iconify text-3xl text-green-600 dark:text-green-400" data-icon="lucide:scan-face"></span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Biometric Auth</h3>
+            <p class="text-sm text-dark-500 dark:text-dark-400">Face ID and fingerprint for fast, secure access</p>
+          </div>
+          <div
+            class="card-hover bg-white dark:bg-dark-800 rounded-3xl p-8 text-center border border-dark-100 dark:border-dark-700">
+            <div
+              class="w-16 h-16 bg-amber-50 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <span class="iconify text-3xl text-amber-600 dark:text-amber-400" data-icon="lucide:eye"></span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Fraud Monitoring</h3>
+            <p class="text-sm text-dark-500 dark:text-dark-400">AI-powered real-time fraud detection and prevention</p>
+          </div>
+          <div
+            class="card-hover bg-white dark:bg-dark-800 rounded-3xl p-8 text-center border border-dark-100 dark:border-dark-700">
+            <div
+              class="w-16 h-16 bg-violet-50 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <span class="iconify text-3xl text-violet-600 dark:text-violet-400"
+                data-icon="lucide:lock-keyhole"></span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">FDIC Insured</h3>
+            <p class="text-sm text-dark-500 dark:text-dark-400">Your deposits are insured up to $250,000</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global Transfers -->
+    <section class="py-24 bg-white dark:bg-dark-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+          <!-- Globe visual -->
+          <div class="relative flex items-center justify-center">
+            <div
+              class="w-80 h-80 lg:w-96 lg:h-96 rounded-full border-2 border-brand-100 dark:border-brand-900/50 relative animate-rotate-slow">
+              <div class="absolute inset-4 rounded-full border border-brand-100 dark:border-brand-900/30"></div>
+              <div class="absolute inset-10 rounded-full border border-brand-100 dark:border-brand-900/20"></div>
+              <!-- Country pins -->
+              <div
+                class="absolute top-8 left-1/2 w-4 h-4 bg-brand-500 rounded-full animate-pulse shadow-lg shadow-brand-500/50">
+              </div>
+              <div
+                class="absolute top-1/3 right-8 w-3 h-3 bg-cyan-500 rounded-full animate-pulse shadow-lg shadow-cyan-500/50"
+                style="animation-delay:0.5s"></div>
+              <div
+                class="absolute bottom-1/3 left-12 w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"
+                style="animation-delay:1s"></div>
+              <div
+                class="absolute bottom-12 right-1/3 w-4 h-4 bg-violet-500 rounded-full animate-pulse shadow-lg shadow-violet-500/50"
+                style="animation-delay:1.5s"></div>
+              <div
+                class="absolute top-1/2 left-6 w-3 h-3 bg-amber-500 rounded-full animate-pulse shadow-lg shadow-amber-500/50"
+                style="animation-delay:2s"></div>
+            </div>
+            <!-- Floating currency cards -->
+            <div class="absolute top-4 right-4 glass-card rounded-xl p-3 shadow-lg animate-float">
+              <p class="text-xs text-dark-400">USD → EUR</p>
+              <p class="font-bold text-sm">0.9234</p>
+            </div>
+            <div class="absolute bottom-4 left-4 glass-card rounded-xl p-3 shadow-lg animate-float-delayed">
+              <p class="text-xs text-dark-400">GBP → JPY</p>
+              <p class="font-bold text-sm">191.42</p>
+            </div>
+          </div>
+
+          <div>
+            <span
+              class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-4">Global</span>
+            <h2 class="text-3xl lg:text-5xl font-bold tracking-tight mb-6">Send money worldwide</h2>
+            <p class="text-dark-500 dark:text-dark-400 text-lg leading-relaxed mb-8">Transfer to 180+ countries at the
+              real exchange rate. No markups, no hidden fees, just transparent pricing.</p>
+
+            <div class="space-y-4 mb-8">
+              <div class="flex items-center gap-4">
+                <span class="iconify text-green-500 text-xl" data-icon="lucide:check-circle-2"></span>
+                <span class="font-medium">Real mid-market exchange rate</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="iconify text-green-500 text-xl" data-icon="lucide:check-circle-2"></span>
+                <span class="font-medium">Transfers arrive in seconds</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="iconify text-green-500 text-xl" data-icon="lucide:check-circle-2"></span>
+                <span class="font-medium">No hidden fees or markups</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="iconify text-green-500 text-xl" data-icon="lucide:check-circle-2"></span>
+                <span class="font-medium">Hold 30+ currencies simultaneously</span>
+              </div>
+            </div>
+
+            <a onclick="navigateTo('signup')"
+              class="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-semibold cursor-pointer group hover:gap-3 transition-all">
+              Start sending money <span class="iconify group-hover:translate-x-1 transition-transform"
+                data-icon="lucide:arrow-right"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-24 bg-brand-600 dark:bg-brand-900 relative overflow-hidden">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_70%)]"></div>
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span
+            class="inline-block px-4 py-1.5 bg-white/10 text-white/80 text-xs font-bold uppercase tracking-widest rounded-full mb-4">Testimonials</span>
+          <h2 class="text-3xl lg:text-5xl font-bold tracking-tight text-white">Loved by millions</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+            <div class="flex gap-1 mb-4">
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+            </div>
+            <p class="text-white/80 mb-6 leading-relaxed">"NexBank saved me hundreds on international transfers. The
+              exchange rates are unbeatable and the app is incredibly intuitive."</p>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm">
+                SK</div>
+              <div>
+                <p class="text-white font-semibold text-sm">Sarah Kim</p>
+                <p class="text-white/50 text-xs">Freelancer, Berlin</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+            <div class="flex gap-1 mb-4">
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+            </div>
+            <p class="text-white/80 mb-6 leading-relaxed">"The analytics feature is a game-changer. I finally understand
+              where my money goes each month and I've saved 20% more."</p>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm">
+                JM</div>
+              <div>
+                <p class="text-white font-semibold text-sm">James Morgan</p>
+                <p class="text-white/50 text-xs">Engineer, London</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+            <div class="flex gap-1 mb-4">
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+              <span class="iconify text-yellow-400" data-icon="lucide:star"></span>
+            </div>
+            <p class="text-white/80 mb-6 leading-relaxed">"Best business banking experience. Multi-currency accounts and
+              instant invoicing have transformed our operations."</p>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm">
+                LC</div>
+              <div>
+                <p class="text-white font-semibold text-sm">Lisa Chen</p>
+                <p class="text-white/50 text-xs">CEO, Singapore</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-24 bg-white dark:bg-dark-950">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-4">FAQ</span>
+          <h2 class="text-3xl lg:text-5xl font-bold tracking-tight">Common questions</h2>
+        </div>
+
+        <div class="space-y-4" id="faq-container">
+          <div class="faq-item border border-dark-200 dark:border-dark-700 rounded-2xl overflow-hidden">
+            <button onclick="toggleFaq(this)"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-dark-50 dark:hover:bg-dark-800 transition-colors">
+              <span class="font-semibold pr-4">How do I open an account?</span>
+              <span class="iconify text-xl shrink-0 transition-transform duration-300" data-icon="lucide:plus"></span>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6">
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Opening an account is simple and takes less
+                than 5 minutes. Sign up with your email, verify your identity with a valid ID, and start using your
+                account immediately. No minimum deposit required.</p>
+            </div>
+          </div>
+          <div class="faq-item border border-dark-200 dark:border-dark-700 rounded-2xl overflow-hidden">
+            <button onclick="toggleFaq(this)"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-dark-50 dark:hover:bg-dark-800 transition-colors">
+              <span class="font-semibold pr-4">What are the transfer fees?</span>
+              <span class="iconify text-xl shrink-0 transition-transform duration-300" data-icon="lucide:plus"></span>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6">
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Domestic transfers are completely free.
+                International transfers have a transparent, low flat fee starting from $0.50, depending on the currency
+                and amount. We always show you the exact fee before you send.</p>
+            </div>
+          </div>
+          <div class="faq-item border border-dark-200 dark:border-dark-700 rounded-2xl overflow-hidden">
+            <button onclick="toggleFaq(this)"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-dark-50 dark:hover:bg-dark-800 transition-colors">
+              <span class="font-semibold pr-4">Is my money safe?</span>
+              <span class="iconify text-xl shrink-0 transition-transform duration-300" data-icon="lucide:plus"></span>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6">
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Absolutely. Your deposits are FDIC insured up
+                to $250,000. We use 256-bit encryption, two-factor authentication, and 24/7 fraud monitoring to keep
+                your money and data secure.</p>
+            </div>
+          </div>
+          <div class="faq-item border border-dark-200 dark:border-dark-700 rounded-2xl overflow-hidden">
+            <button onclick="toggleFaq(this)"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-dark-50 dark:hover:bg-dark-800 transition-colors">
+              <span class="font-semibold pr-4">Can I hold multiple currencies?</span>
+              <span class="iconify text-xl shrink-0 transition-transform duration-300" data-icon="lucide:plus"></span>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6">
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Yes! You can hold, exchange, and send 30+
+                currencies from a single account. Exchange between currencies instantly at the real mid-market rate with
+                no hidden markups.</p>
+            </div>
+          </div>
+          <div class="faq-item border border-dark-200 dark:border-dark-700 rounded-2xl overflow-hidden">
+            <button onclick="toggleFaq(this)"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-dark-50 dark:hover:bg-dark-800 transition-colors">
+              <span class="font-semibold pr-4">How do I contact support?</span>
+              <span class="iconify text-xl shrink-0 transition-transform duration-300" data-icon="lucide:plus"></span>
+            </button>
+            <div class="faq-answer hidden px-6 pb-6">
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Our support team is available 24/7 via in-app
+                chat, email, or phone. Premium and Business plan users get priority support with average response times
+                under 2 minutes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-dark-50 dark:bg-dark-900">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl lg:text-5xl font-bold tracking-tight mb-6">Ready to take control of your finances?</h2>
+        <p class="text-dark-500 dark:text-dark-400 text-lg mb-10 max-w-2xl mx-auto">Join over 12 million people who
+          trust NexBank for smarter, faster, and fairer banking.</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a onclick="navigateTo('signup')"
+            class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-xl hover:shadow-brand-600/25 cursor-pointer">
+            Open Free Account
+            <span class="iconify" data-icon="lucide:arrow-right"></span>
+          </a>
+          <a onclick="navigateTo('pricing')"
+            class="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-dark-200 dark:border-dark-700 hover:border-brand-300 dark:hover:border-brand-700 font-semibold rounded-2xl transition-all duration-300 cursor-pointer">
+            View Pricing
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== PERSONAL BANKING PAGE ==================== -->
+  <div id="page-personal" class="page-section">
+    <section class="pt-32 lg:pt-40 pb-24 hero-gradient">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-6">Personal
+            Banking</span>
+          <h1 class="text-4xl lg:text-6xl font-bold tracking-tight mb-6">Your money, your way</h1>
+          <p class="text-xl text-dark-500 dark:text-dark-400 leading-relaxed mb-8">Everything you need to manage, grow,
+            and protect your personal finances — all in one beautifully simple app.</p>
+          <a onclick="navigateTo('signup')"
+            class="inline-flex items-center gap-2 px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-xl hover:shadow-brand-600/25 cursor-pointer">
+            Get Started Free <span class="iconify" data-icon="lucide:arrow-right"></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-white dark:bg-dark-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-8">
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-brand-600" data-icon="lucide:wallet"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Smart Spending</h3>
+            <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Get instant notifications, categorize spending
+              automatically, and set budgets that adapt to your lifestyle.</p>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-green-50 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-green-600" data-icon="lucide:piggy-bank"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Auto Savings</h3>
+            <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Round up purchases, set aside spare change, and
+              earn competitive interest on your savings automatically.</p>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-violet-50 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-violet-600" data-icon="lucide:globe"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Travel Smarter</h3>
+            <p class="text-dark-500 dark:text-dark-400 leading-relaxed">No foreign transaction fees, real exchange
+              rates, and free overseas ATM withdrawals on premium plans.</p>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-cyan-50 dark:bg-cyan-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-cyan-600" data-icon="lucide:credit-card"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Virtual Cards</h3>
+            <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Generate disposable virtual cards for online
+              shopping. Freeze and unfreeze your card instantly from the app.</p>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-amber-50 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-amber-600" data-icon="lucide:split"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Split Bills</h3>
+            <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Split expenses with friends and group settle
+              easily. No more awkward money conversations.</p>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700">
+            <div class="w-14 h-14 bg-rose-50 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center mb-6">
+              <span class="iconify text-2xl text-rose-600" data-icon="lucide:bar-chart-3"></span>
+            </div>
+            <h3 class="text-xl font-bold mb-3">Investments</h3>
+            <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Invest in stocks, crypto, and commodities
+              starting from $1. Automated portfolio management available.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== BUSINESS BANKING PAGE ==================== -->
+  <div id="page-business" class="page-section">
+    <section class="pt-32 lg:pt-40 pb-24 hero-gradient">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-6">Business
+            Banking</span>
+          <h1 class="text-4xl lg:text-6xl font-bold tracking-tight mb-6">Built for business</h1>
+          <p class="text-xl text-dark-500 dark:text-dark-400 leading-relaxed mb-8">Powerful financial tools designed for
+            startups, SMEs, and enterprises. Automate your finances and focus on growth.</p>
+          <a onclick="navigateTo('signup')"
+            class="inline-flex items-center gap-2 px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl transition-all duration-300 hover:shadow-xl hover:shadow-brand-600/25 cursor-pointer">
+            Open Business Account <span class="iconify" data-icon="lucide:arrow-right"></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-white dark:bg-dark-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-8">
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700 flex gap-6">
+            <div
+              class="w-14 h-14 bg-brand-50 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center shrink-0">
+              <span class="iconify text-2xl text-brand-600" data-icon="lucide:building-2"></span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Multi-entity Management</h3>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Manage multiple business entities from a
+                single dashboard with separate accounts, cards, and permissions.</p>
+            </div>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700 flex gap-6">
+            <div
+              class="w-14 h-14 bg-green-50 dark:bg-green-900/30 rounded-2xl flex items-center justify-center shrink-0">
+              <span class="iconify text-2xl text-green-600" data-icon="lucide:file-text"></span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Invoicing & Payments</h3>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Create and send professional invoices. Accept
+                payments in multiple currencies with automated reconciliation.</p>
+            </div>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700 flex gap-6">
+            <div
+              class="w-14 h-14 bg-violet-50 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center shrink-0">
+              <span class="iconify text-2xl text-violet-600" data-icon="lucide:users"></span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Team Permissions</h3>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Set custom spending limits, approval
+                workflows, and role-based access for every team member.</p>
+            </div>
+          </div>
+          <div
+            class="card-hover glow-card bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700 flex gap-6">
+            <div
+              class="w-14 h-14 bg-amber-50 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center shrink-0">
+              <span class="iconify text-2xl text-amber-600" data-icon="lucide:plug"></span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">API & Integrations</h3>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Connect with your accounting software, ERP,
+                and CRM. Powerful APIs for custom integrations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== PRICING PAGE ==================== -->
+  <div id="page-pricing" class="page-section">
+    <section class="pt-32 lg:pt-40 pb-24 hero-gradient">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-6">Pricing</span>
+          <h1 class="text-4xl lg:text-6xl font-bold tracking-tight mb-4">Simple, transparent pricing</h1>
+          <p class="text-xl text-dark-500 dark:text-dark-400">No hidden fees. No surprises. Choose the plan that fits
+            your needs.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <!-- Free -->
+          <div class="card-hover bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-200 dark:border-dark-700">
+            <p class="text-sm font-bold text-dark-400 uppercase tracking-wider mb-2">Free</p>
+            <p class="text-4xl font-bold mb-1">$0</p>
+            <p class="text-sm text-dark-400 mb-8">Forever free</p>
+            <a onclick="navigateTo('signup')"
+              class="block text-center px-6 py-3 border-2 border-dark-200 dark:border-dark-700 rounded-2xl font-semibold hover:border-brand-300 dark:hover:border-brand-700 transition-colors cursor-pointer">Get
+              Started</a>
+            <div class="mt-8 space-y-4">
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">1 currency account</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">5 free transfers/month</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">Virtual card</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">Basic analytics</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-dark-300 dark:text-dark-600"
+                  data-icon="lucide:x"></span><span class="text-sm text-dark-400">Priority support</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-dark-300 dark:text-dark-600"
+                  data-icon="lucide:x"></span><span class="text-sm text-dark-400">Crypto trading</span></div>
+            </div>
+          </div>
+
+          <!-- Premium -->
+          <div class="relative card-hover bg-brand-600 rounded-3xl p-8 text-white shadow-2xl glow-blue scale-105">
+            <div
+              class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-400 text-dark-900 text-xs font-bold rounded-full">
+              MOST POPULAR</div>
+            <p class="text-sm font-bold text-brand-200 uppercase tracking-wider mb-2">Premium</p>
+            <p class="text-4xl font-bold mb-1">$9.99</p>
+            <p class="text-sm text-brand-200 mb-8">per month</p>
+            <a onclick="navigateTo('signup')"
+              class="block text-center px-6 py-3 bg-white text-brand-600 rounded-2xl font-semibold hover:bg-brand-50 transition-colors cursor-pointer">Start
+              Free Trial</a>
+            <div class="mt-8 space-y-4">
+              <div class="flex items-center gap-3"><span class="iconify text-brand-200"
+                  data-icon="lucide:check"></span><span class="text-sm">Multi-currency (10+)</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-brand-200"
+                  data-icon="lucide:check"></span><span class="text-sm">Unlimited free transfers</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-brand-200"
+                  data-icon="lucide:check"></span><span class="text-sm">Virtual + Physical card</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-brand-200"
+                  data-icon="lucide:check"></span><span class="text-sm">Advanced analytics</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-brand-200"
+                  data-icon="lucide:check"></span><span class="text-sm">Priority support</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-brand-200"
+                  data-icon="lucide:check"></span><span class="text-sm">Crypto trading</span></div>
+            </div>
+          </div>
+
+          <!-- Business -->
+          <div class="card-hover bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-200 dark:border-dark-700">
+            <p class="text-sm font-bold text-dark-400 uppercase tracking-wider mb-2">Business</p>
+            <p class="text-4xl font-bold mb-1">$29.99</p>
+            <p class="text-sm text-dark-400 mb-8">per month</p>
+            <a onclick="navigateTo('signup')"
+              class="block text-center px-6 py-3 border-2 border-dark-200 dark:border-dark-700 rounded-2xl font-semibold hover:border-brand-300 dark:hover:border-brand-700 transition-colors cursor-pointer">Contact
+              Sales</a>
+            <div class="mt-8 space-y-4">
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">Everything in Premium</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">Multi-entity</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">Team cards & limits</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">API access</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">Invoicing</span></div>
+              <div class="flex items-center gap-3"><span class="iconify text-green-500"
+                  data-icon="lucide:check"></span><span class="text-sm">Dedicated manager</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== SECURITY PAGE ==================== -->
+  <div id="page-security" class="page-section">
+    <section class="pt-32 lg:pt-40 pb-24 hero-gradient">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-6">Security</span>
+          <h1 class="text-4xl lg:text-6xl font-bold tracking-tight mb-6">Your security is our priority</h1>
+          <p class="text-xl text-dark-500 dark:text-dark-400 leading-relaxed">We invest heavily in cutting-edge security
+            infrastructure so you can bank with complete peace of mind.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-white dark:bg-dark-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12">
+          <div class="space-y-8">
+            <div class="p-6 bg-dark-50 dark:bg-dark-800 rounded-3xl">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-brand-100 dark:bg-brand-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-xl text-brand-600" data-icon="lucide:shield-check"></span>
+                </div>
+                <h3 class="text-lg font-bold">End-to-End Encryption</h3>
+              </div>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">All data is encrypted at rest (AES-256) and in
+                transit (TLS 1.3). Your financial information is never stored in plain text.</p>
+            </div>
+            <div class="p-6 bg-dark-50 dark:bg-dark-800 rounded-3xl">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-xl text-green-600" data-icon="lucide:scan-face"></span>
+                </div>
+                <h3 class="text-lg font-bold">Multi-Factor Authentication</h3>
+              </div>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Biometrics, SMS codes, authenticator apps, and
+                hardware keys — choose the method that suits you best.</p>
+            </div>
+            <div class="p-6 bg-dark-50 dark:bg-dark-800 rounded-3xl">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-xl text-amber-600" data-icon="lucide:eye"></span>
+                </div>
+                <h3 class="text-lg font-bold">Real-time Monitoring</h3>
+              </div>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">AI systems monitor every transaction 24/7,
+                flagging suspicious activity instantly and protecting your account proactively.</p>
+            </div>
+          </div>
+          <div class="space-y-8">
+            <div class="p-6 bg-dark-50 dark:bg-dark-800 rounded-3xl">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-violet-100 dark:bg-violet-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-xl text-violet-600" data-icon="lucide:key-round"></span>
+                </div>
+                <h3 class="text-lg font-bold">Secure Key Infrastructure</h3>
+              </div>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Keys are stored in FIPS 140-2 Level 3
+                compliant Hardware Security Modules, ensuring the highest level of key protection.</p>
+            </div>
+            <div class="p-6 bg-dark-50 dark:bg-dark-800 rounded-3xl">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-xl text-cyan-600" data-icon="lucide:badge-check"></span>
+                </div>
+                <h3 class="text-lg font-bold">Regulatory Compliance</h3>
+              </div>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Fully licensed and regulated by financial
+                authorities. SOC 2 Type II certified with regular third-party security audits.</p>
+            </div>
+            <div class="p-6 bg-dark-50 dark:bg-dark-800 rounded-3xl">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-xl flex items-center justify-center">
+                  <span class="iconify text-xl text-rose-600" data-icon="lucide:smartphone"></span>
+                </div>
+                <h3 class="text-lg font-bold">Instant Card Controls</h3>
+              </div>
+              <p class="text-dark-500 dark:text-dark-400 leading-relaxed">Freeze your card instantly, set spending
+                limits, and block specific merchant categories — all from your phone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== SUPPORT PAGE ==================== -->
+  <div id="page-support" class="page-section">
+    <section class="pt-32 lg:pt-40 pb-24 hero-gradient">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto">
+          <span
+            class="inline-block px-4 py-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 text-xs font-bold uppercase tracking-widest rounded-full mb-6">Support</span>
+          <h1 class="text-4xl lg:text-6xl font-bold tracking-tight mb-6">How can we help?</h1>
+          <div class="relative max-w-xl mx-auto">
+            <span class="iconify absolute left-4 top-1/2 -translate-y-1/2 text-dark-400 text-xl"
+              data-icon="lucide:search"></span>
+            <input type="text" placeholder="Search for help..."
+              class="w-full pl-12 pr-4 py-4 rounded-2xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800 text-base focus:ring-2 focus:ring-brand-500/20">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-white dark:bg-dark-950">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-8 mb-16">
+          <div class="card-hover bg-dark-50 dark:bg-dark-800 rounded-3xl p-8 text-center cursor-pointer">
+            <div
+              class="w-14 h-14 bg-brand-100 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span class="iconify text-2xl text-brand-600" data-icon="lucide:message-circle"></span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Live Chat</h3>
+            <p class="text-sm text-dark-500 dark:text-dark-400">Chat with our team 24/7 for instant help</p>
+          </div>
+          <div class="card-hover bg-dark-50 dark:bg-dark-800 rounded-3xl p-8 text-center cursor-pointer">
+            <div
+              class="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span class="iconify text-2xl text-green-600" data-icon="lucide:mail"></span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Email Support</h3>
+            <p class="text-sm text-dark-500 dark:text-dark-400">support@nexbank.com — response within 4 hours</p>
+          </div>
+          <div class="card-hover bg-dark-50 dark:bg-dark-800 rounded-3xl p-8 text-center cursor-pointer">
+            <div
+              class="w-14 h-14 bg-violet-100 dark:bg-violet-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <span class="iconify text-2xl text-violet-600" data-icon="lucide:phone"></span>
+            </div>
+            <h3 class="font-bold text-lg mb-2">Phone Support</h3>
+            <p class="text-sm text-dark-500 dark:text-dark-400">Available for Premium & Business users</p>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="max-w-2xl mx-auto">
+          <h2 class="text-2xl font-bold mb-8 text-center">Send us a message</h2>
+          <form onsubmit="handleSupportSubmit(event)" class="space-y-6">
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium mb-2">First Name</label>
+                <input type="text"
+                  class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800"
+                  placeholder="John">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Last Name</label>
+                <input type="text"
+                  class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800"
+                  placeholder="Doe">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Email</label>
+              <input type="email"
+                class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800"
+                placeholder="john@example.com">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Subject</label>
+              <select
+                class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800">
+                <option>Account Issue</option>
+                <option>Card Problem</option>
+                <option>Transfer Inquiry</option>
+                <option>Security Concern</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Message</label>
+              <textarea rows="5"
+                class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-800 resize-none"
+                placeholder="Describe your issue..."></textarea>
+            </div>
+            <button type="submit"
+              class="w-full px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl transition-all duration-300">Send
+              Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== LOGIN PAGE ==================== -->
+  <div id="page-login" class="page-section">
+    <section class="min-h-screen flex items-center justify-center hero-gradient pt-20 pb-12">
+      <div class="w-full max-w-md px-4">
+        <div class="text-center mb-8">
+          <a onclick="navigateTo('home')" class="inline-flex items-center gap-2 mb-8 cursor-pointer">
+            <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center">
+              <span class="iconify text-white text-lg" data-icon="lucide:landmark"></span>
+            </div>
+            <span class="text-xl font-bold">NexBank</span>
+          </a>
+          <h1 class="text-2xl font-bold">Welcome back</h1>
+          <p class="text-dark-500 dark:text-dark-400 mt-2">Log in to your NexBank account</p>
+        </div>
+
+        <form onsubmit="handleLogin(event)"
+          class="bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700 shadow-xl">
+          <div class="space-y-5">
+            <div>
+              <label class="block text-sm font-medium mb-2">Email</label>
+              <input type="email"
+                class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900"
+                placeholder="you@example.com">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Password</label>
+              <div class="relative">
+                <input id="loginPassword" type="password"
+                  class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900 pr-12"
+                  placeholder="••••••••">
+                <button type="button" onclick="togglePasswordVisibility('loginPassword')"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-600">
+                  <span class="iconify" data-icon="lucide:eye"></span>
+                </button>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="rounded border-dark-300 text-brand-600 focus:ring-brand-500">
+                <span class="text-sm">Remember me</span>
+              </label>
+              <a class="text-sm text-brand-600 hover:text-brand-700 font-medium cursor-pointer">Forgot password?</a>
+            </div>
+            <button type="submit"
+              class="w-full px-8 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand-600/25">Log
+              In</button>
+          </div>
+          <div class="mt-6">
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-dark-200 dark:border-dark-700"></div>
+              </div>
+              <div class="relative flex justify-center text-xs"><span
+                  class="px-2 bg-white dark:bg-dark-800 text-dark-400">or continue with</span></div>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mt-4">
+              <button type="button"
+                class="flex items-center justify-center p-3 border border-dark-200 dark:border-dark-700 rounded-xl hover:bg-dark-50 dark:hover:bg-dark-700 transition-colors">
+                <span class="iconify text-xl" data-icon="logos:google-icon"></span>
+              </button>
+              <button type="button"
+                class="flex items-center justify-center p-3 border border-dark-200 dark:border-dark-700 rounded-xl hover:bg-dark-50 dark:hover:bg-dark-700 transition-colors">
+                <span class="iconify text-xl" data-icon="lucide:apple"></span>
+              </button>
+              <button type="button"
+                class="flex items-center justify-center p-3 border border-dark-200 dark:border-dark-700 rounded-xl hover:bg-dark-50 dark:hover:bg-dark-700 transition-colors">
+                <span class="iconify text-xl" data-icon="lucide:fingerprint"></span>
+              </button>
+            </div>
+          </div>
+          <p class="text-center text-sm text-dark-500 dark:text-dark-400 mt-6">Don't have an account? <a
+              onclick="navigateTo('signup')"
+              class="text-brand-600 hover:text-brand-700 font-semibold cursor-pointer">Sign up</a></p>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== SIGNUP PAGE ==================== -->
+  <div id="page-signup" class="page-section">
+    <section class="min-h-screen flex items-center justify-center hero-gradient pt-20 pb-12">
+      <div class="w-full max-w-md px-4">
+        <div class="text-center mb-8">
+          <a onclick="navigateTo('home')" class="inline-flex items-center gap-2 mb-8 cursor-pointer">
+            <div class="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center">
+              <span class="iconify text-white text-lg" data-icon="lucide:landmark"></span>
+            </div>
+            <span class="text-xl font-bold">NexBank</span>
+          </a>
+          <h1 class="text-2xl font-bold">Create your account</h1>
+          <p class="text-dark-500 dark:text-dark-400 mt-2">Start banking smarter in minutes</p>
+        </div>
+
+        <form onsubmit="handleSignup(event)"
+          class="bg-white dark:bg-dark-800 rounded-3xl p-8 border border-dark-100 dark:border-dark-700 shadow-xl">
+          <div class="space-y-5">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">First Name</label>
+                <input type="text"
+                  class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900"
+                  placeholder="John">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Last Name</label>
+                <input type="text"
+                  class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900"
+                  placeholder="Doe">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Email</label>
+              <input type="email"
+                class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900"
+                placeholder="you@example.com">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Password</label>
+              <div class="relative">
+                <input id="signupPassword" type="password"
+                  class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900 pr-12"
+                  placeholder="Min. 8 characters">
+                <button type="button" onclick="togglePasswordVisibility('signupPassword')"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-600">
+                  <span class="iconify" data-icon="lucide:eye"></span>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Account Type</label>
+              <select
+                class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900">
+                <option>Personal</option>
+                <option>Business</option>
+              </select>
+            </div>
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" class="rounded border-dark-300 text-brand-600 focus:ring-brand-500 mt-1">
+              <span class="text-sm text-dark-500 dark:text-dark-400">I agree to the <a
+                  class="text-brand-600 font-medium cursor-pointer">Terms of Service</a> and <a
+                  class="text-brand-600 font-medium cursor-pointer">Privacy Policy</a></span>
+            </label>
+            <button type="submit"
+              class="w-full px-8 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand-600/25">Create
+              Account</button>
+          </div>
+          <p class="text-center text-sm text-dark-500 dark:text-dark-400 mt-6">Already have an account? <a
+              onclick="navigateTo('login')" class="text-brand-600 hover:text-brand-700 font-semibold cursor-pointer">Log
+              in</a></p>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== DASHBOARD PAGE ==================== -->
+  <div id="page-dashboard" class="page-section">
+    <div class="flex min-h-screen pt-16">
+      <!-- Sidebar -->
+      <aside
+        class="hidden lg:flex flex-col w-64 bg-dark-50 dark:bg-dark-900 border-r border-dark-200 dark:border-dark-800 pt-8 px-4 shrink-0">
+        <div class="flex items-center gap-3 px-4 mb-8">
+          <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">
+            <span class="iconify text-white" data-icon="lucide:user"></span>
+          </div>
+          <div>
+            <p class="font-semibold text-sm">Alex Morrison</p>
+            <p class="text-xs text-dark-400">Premium Account</p>
+          </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+          <a onclick="switchDashboardTab('overview')"
+            class="dashboard-sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium cursor-pointer"
+            data-dtab="overview">
+            <span class="iconify text-lg" data-icon="lucide:layout-dashboard"></span> Overview
+          </a>
+          <a onclick="switchDashboardTab('transactions')"
+            class="dashboard-sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium cursor-pointer"
+            data-dtab="transactions">
+            <span class="iconify text-lg" data-icon="lucide:arrow-left-right"></span> Transactions
+          </a>
+          <a onclick="switchDashboardTab('cards')"
+            class="dashboard-sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium cursor-pointer"
+            data-dtab="cards">
+            <span class="iconify text-lg" data-icon="lucide:credit-card"></span> Cards
+          </a>
+          <a onclick="switchDashboardTab('analytics')"
+            class="dashboard-sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium cursor-pointer"
+            data-dtab="analytics">
+            <span class="iconify text-lg" data-icon="lucide:bar-chart-3"></span> Analytics
+          </a>
+          <a onclick="switchDashboardTab('settings')"
+            class="dashboard-sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium cursor-pointer"
+            data-dtab="settings">
+            <span class="iconify text-lg" data-icon="lucide:settings"></span> Settings
+          </a>
+        </nav>
+
+        <div class="mt-auto pb-6">
+          <a onclick="navigateTo('home')"
+            class="dashboard-sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-dark-400 cursor-pointer">
+            <span class="iconify text-lg" data-icon="lucide:log-out"></span> Log Out
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 bg-white dark:bg-dark-950 overflow-y-auto">
+        <!-- Top Bar -->
+        <div
+          class="sticky top-16 z-30 bg-white/80 dark:bg-dark-950/80 backdrop-blur-xl border-b border-dark-100 dark:border-dark-800 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-xl font-bold" id="dashboardTitle">Overview</h1>
+              <p class="text-sm text-dark-400" id="dashboardSubtitle">Welcome back, Alex</p>
+            </div>
+            <div class="flex items-center gap-4">
+              <button class="relative p-2 hover:bg-dark-100 dark:hover:bg-dark-800 rounded-xl transition-colors">
+                <span class="iconify text-xl" data-icon="lucide:bell"></span>
+                <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+              <!-- Mobile menu toggle -->
+              <button onclick="toggleDashboardMobileNav()"
+                class="lg:hidden p-2 hover:bg-dark-100 dark:hover:bg-dark-800 rounded-xl transition-colors">
+                <span class="iconify text-xl" data-icon="lucide:menu"></span>
+              </button>
+            </div>
+          </div>
+          <!-- Mobile Dashboard Nav -->
+          <div id="dashboardMobileNav" class="lg:hidden hidden mt-4 flex gap-2 overflow-x-auto pb-2">
+            <button onclick="switchDashboardTab('overview')"
+              class="shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-brand-600 text-white"
+              data-dtab-m="overview">Overview</button>
+            <button onclick="switchDashboardTab('transactions')"
+              class="shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-dark-100 dark:bg-dark-800"
+              data-dtab-m="transactions">Transactions</button>
+            <button onclick="switchDashboardTab('cards')"
+              class="shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-dark-100 dark:bg-dark-800"
+              data-dtab-m="cards">Cards</button>
+            <button onclick="switchDashboardTab('analytics')"
+              class="shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-dark-100 dark:bg-dark-800"
+              data-dtab-m="analytics">Analytics</button>
+            <button onclick="switchDashboardTab('settings')"
+              class="shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-dark-100 dark:bg-dark-800"
+              data-dtab-m="settings">Settings</button>
+          </div>
+        </div>
+
+        <!-- Dashboard Content Area -->
+        <div class="p-6">
+
+          <!-- Overview Tab -->
+          <div id="dtab-overview" class="dashboard-tab">
+            <!-- Balance Cards -->
+            <div class="grid sm:grid-cols-3 gap-6 mb-8">
+              <div class="bg-gradient-to-br from-brand-600 to-brand-800 rounded-3xl p-6 text-white glow-blue">
+                <p class="text-brand-200 text-sm font-medium mb-1">Total Balance</p>
+                <p class="text-3xl font-bold mb-4">$24,562.80</p>
+                <div class="flex items-center gap-2 text-sm">
+                  <span class="iconify text-green-300" data-icon="lucide:trending-up"></span>
+                  <span class="text-green-300 font-medium">+12.5%</span>
+                  <span class="text-brand-200">vs last month</span>
+                </div>
+              </div>
+              <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <p class="text-dark-400 text-sm font-medium mb-1">Income</p>
+                <p class="text-2xl font-bold mb-3 text-green-600">$8,420.00</p>
+                <div class="flex items-center gap-2 text-sm">
+                  <span class="iconify text-green-500" data-icon="lucide:trending-up"></span>
+                  <span class="text-green-600 font-medium">+8.2%</span>
+                </div>
+              </div>
+              <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <p class="text-dark-400 text-sm font-medium mb-1">Expenses</p>
+                <p class="text-2xl font-bold mb-3 text-red-500">$4,280.50</p>
+                <div class="flex items-center gap-2 text-sm">
+                  <span class="iconify text-red-400" data-icon="lucide:trending-down"></span>
+                  <span class="text-red-500 font-medium">-3.1%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart & Recent Transactions -->
+            <div class="grid lg:grid-cols-5 gap-6">
+              <!-- Chart -->
+              <div
+                class="lg:col-span-3 bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="font-bold">Spending Overview</h3>
+                  <div class="flex gap-1">
+                    <button class="px-3 py-1 text-xs font-semibold bg-brand-600 text-white rounded-lg">Week</button>
+                    <button
+                      class="px-3 py-1 text-xs font-semibold text-dark-400 hover:bg-dark-100 dark:hover:bg-dark-700 rounded-lg transition-colors">Month</button>
+                  </div>
+                </div>
+                <!-- Bar Chart -->
+                <div class="flex items-end justify-between gap-2 h-40">
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-brand-100 dark:bg-brand-900/30 rounded-t-lg bar-animate"
+                      style="height:60%;animation-delay:0.1s"></div>
+                    <span class="text-xs text-dark-400">Mon</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-brand-200 dark:bg-brand-900/40 rounded-t-lg bar-animate"
+                      style="height:80%;animation-delay:0.2s"></div>
+                    <span class="text-xs text-dark-400">Tue</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-brand-300 dark:bg-brand-800/50 rounded-t-lg bar-animate"
+                      style="height:45%;animation-delay:0.3s"></div>
+                    <span class="text-xs text-dark-400">Wed</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-brand-400 dark:bg-brand-700/60 rounded-t-lg bar-animate"
+                      style="height:90%;animation-delay:0.4s"></div>
+                    <span class="text-xs text-dark-400">Thu</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-brand-500 dark:bg-brand-600/70 rounded-t-lg bar-animate"
+                      style="height:55%;animation-delay:0.5s"></div>
+                    <span class="text-xs text-dark-400">Fri</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-brand-600 rounded-t-lg bar-animate" style="height:70%;animation-delay:0.6s">
+                    </div>
+                    <span class="text-xs text-dark-400">Sat</span>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center gap-2">
+                    <div class="w-full bg-brand-500 dark:bg-brand-600/70 rounded-t-lg bar-animate"
+                      style="height:35%;animation-delay:0.7s"></div>
+                    <span class="text-xs text-dark-400">Sun</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Transactions -->
+              <div
+                class="lg:col-span-2 bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="font-bold">Recent</h3>
+                  <a onclick="switchDashboardTab('transactions')"
+                    class="text-xs text-brand-600 font-semibold cursor-pointer">View All</a>
+                </div>
+                <div class="space-y-4">
+                  <div class="transaction-row flex items-center gap-3 p-2 rounded-xl">
+                    <div
+                      class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center shrink-0">
+                      <span class="iconify text-green-600" data-icon="lucide:arrow-down-left"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold truncate">Salary Payment</p>
+                      <p class="text-xs text-dark-400">Today, 9:00 AM</p>
+                    </div>
+                    <p class="text-sm font-bold text-green-600">+$5,200</p>
+                  </div>
+                  <div class="transaction-row flex items-center gap-3 p-2 rounded-xl">
+                    <div
+                      class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center shrink-0">
+                      <span class="iconify text-red-600" data-icon="lucide:arrow-up-right"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold truncate">Netflix Subscription</p>
+                      <p class="text-xs text-dark-400">Yesterday, 3:24 PM</p>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">-$15.99</p>
+                  </div>
+                  <div class="transaction-row flex items-center gap-3 p-2 rounded-xl">
+                    <div
+                      class="w-10 h-10 bg-brand-100 dark:bg-brand-900/30 rounded-xl flex items-center justify-center shrink-0">
+                      <span class="iconify text-brand-600" data-icon="lucide:arrow-up-right"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold truncate">Transfer to Sarah</p>
+                      <p class="text-xs text-dark-400">Jun 12, 11:45 AM</p>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">-$500</p>
+                  </div>
+                  <div class="transaction-row flex items-center gap-3 p-2 rounded-xl">
+                    <div
+                      class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center shrink-0">
+                      <span class="iconify text-amber-600" data-icon="lucide:shopping-bag"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold truncate">Amazon Purchase</p>
+                      <p class="text-xs text-dark-400">Jun 11, 2:30 PM</p>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">-$89.99</p>
+                  </div>
+                  <div class="transaction-row flex items-center gap-3 p-2 rounded-xl">
+                    <div
+                      class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center shrink-0">
+                      <span class="iconify text-green-600" data-icon="lucide:arrow-down-left"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-semibold truncate">Freelance Payment</p>
+                      <p class="text-xs text-dark-400">Jun 10, 6:00 PM</p>
+                    </div>
+                    <p class="text-sm font-bold text-green-600">+$1,350</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transactions Tab -->
+          <div id="dtab-transactions" class="dashboard-tab hidden">
+            <div
+              class="bg-white dark:bg-dark-800 rounded-3xl border border-dark-100 dark:border-dark-700 overflow-hidden">
+              <div
+                class="p-6 border-b border-dark-100 dark:border-dark-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <h3 class="font-bold text-lg">Transaction History</h3>
+                <div class="flex items-center gap-3">
+                  <div class="relative">
+                    <span class="iconify absolute left-3 top-1/2 -translate-y-1/2 text-dark-400"
+                      data-icon="lucide:search"></span>
+                    <input type="text" placeholder="Search..."
+                      class="pl-9 pr-4 py-2 text-sm rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900 w-48">
+                  </div>
+                  <select
+                    class="px-3 py-2 text-sm rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900">
+                    <option>All</option>
+                    <option>Income</option>
+                    <option>Expenses</option>
+                  </select>
+                </div>
+              </div>
+              <div class="divide-y divide-dark-100 dark:divide-dark-700">
+                <div class="transaction-row flex items-center gap-4 px-6 py-4">
+                  <div
+                    class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="iconify text-green-600" data-icon="lucide:arrow-down-left"></span></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm">Salary Payment</p>
+                    <p class="text-xs text-dark-400">Jun 15, 2024 · Income</p>
+                  </div>
+                  <p class="text-sm font-bold text-green-600">+$5,200.00</p>
+                </div>
+                <div class="transaction-row flex items-center gap-4 px-6 py-4">
+                  <div
+                    class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="iconify text-red-600" data-icon="lucide:arrow-up-right"></span></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm">Netflix</p>
+                    <p class="text-xs text-dark-400">Jun 14, 2024 · Subscription</p>
+                  </div>
+                  <p class="text-sm font-bold text-red-500">-$15.99</p>
+                </div>
+                <div class="transaction-row flex items-center gap-4 px-6 py-4">
+                  <div
+                    class="w-10 h-10 bg-brand-100 dark:bg-brand-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="iconify text-brand-600" data-icon="lucide:arrow-up-right"></span></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm">Transfer to Sarah K.</p>
+                    <p class="text-xs text-dark-400">Jun 12, 2024 · Transfer</p>
+                  </div>
+                  <p class="text-sm font-bold text-red-500">-$500.00</p>
+                </div>
+                <div class="transaction-row flex items-center gap-4 px-6 py-4">
+                  <div
+                    class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="iconify text-amber-600" data-icon="lucide:shopping-bag"></span></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm">Amazon</p>
+                    <p class="text-xs text-dark-400">Jun 11, 2024 · Shopping</p>
+                  </div>
+                  <p class="text-sm font-bold text-red-500">-$89.99</p>
+                </div>
+                <div class="transaction-row flex items-center gap-4 px-6 py-4">
+                  <div
+                    class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="iconify text-green-600" data-icon="lucide:arrow-down-left"></span></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm">Freelance Payment</p>
+                    <p class="text-xs text-dark-400">Jun 10, 2024 · Income</p>
+                  </div>
+                  <p class="text-sm font-bold text-green-600">+$1,350.00</p>
+                </div>
+                <div class="transaction-row flex items-center gap-4 px-6 py-4">
+                  <div
+                    class="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="iconify text-violet-600" data-icon="lucide:utensils"></span></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm">Restaurant</p>
+                    <p class="text-xs text-dark-400">Jun 9, 2024 · Food</p>
+                  </div>
+                  <p class="text-sm font-bold text-red-500">-$62.40</p>
+                </div>
+                <div class="transaction-row flex items-center gap-4 px-6 py-4">
+                  <div
+                    class="w-10 h-10 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="iconify text-cyan-600" data-icon="lucide:fuel"></span></div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm">Gas Station</p>
+                    <p class="text-xs text-dark-400">Jun 8, 2024 · Transport</p>
+                  </div>
+                  <p class="text-sm font-bold text-red-500">-$45.00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards Tab -->
+          <div id="dtab-cards" class="dashboard-tab hidden">
+            <div class="grid md:grid-cols-2 gap-6">
+              <!-- Physical Card -->
+              <div>
+                <h3 class="font-bold mb-4">Physical Card</h3>
+                <div
+                  class="bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 rounded-3xl p-8 text-white shadow-xl glow-blue relative overflow-hidden">
+                  <div class="absolute inset-0 shimmer-bg pointer-events-none"></div>
+                  <div class="flex justify-between items-start mb-10">
+                    <p class="text-2xl font-bold">$24,562.80</p>
+                    <span class="iconify text-3xl text-white/60" data-icon="lucide:credit-card"></span>
+                  </div>
+                  <p class="font-mono tracking-widest mb-6">•••• •••• •••• 4829</p>
+                  <div class="flex justify-between items-end">
+                    <div>
+                      <p class="text-brand-200 text-xs">CARD HOLDER</p>
+                      <p class="font-semibold text-sm">ALEX MORRISON</p>
+                    </div>
+                    <div>
+                      <p class="text-brand-200 text-xs">EXPIRES</p>
+                      <p class="font-semibold text-sm">09/28</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4 flex gap-3">
+                  <button
+                    class="flex-1 px-4 py-3 bg-dark-50 dark:bg-dark-800 rounded-xl text-sm font-semibold hover:bg-dark-100 dark:hover:bg-dark-700 transition-colors flex items-center justify-center gap-2">
+                    <span class="iconify" data-icon="lucide:snowflake"></span> Freeze
+                  </button>
+                  <button
+                    class="flex-1 px-4 py-3 bg-dark-50 dark:bg-dark-800 rounded-xl text-sm font-semibold hover:bg-dark-100 dark:hover:bg-dark-700 transition-colors flex items-center justify-center gap-2">
+                    <span class="iconify" data-icon="lucide:settings-2"></span> Settings
+                  </button>
+                </div>
+              </div>
+
+              <!-- Virtual Card -->
+              <div>
+                <h3 class="font-bold mb-4">Virtual Card</h3>
+                <div
+                  class="bg-gradient-to-br from-violet-600 via-violet-700 to-purple-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+                  <div class="absolute inset-0 shimmer-bg pointer-events-none"></div>
+                  <div class="flex justify-between items-start mb-10">
+                    <p class="text-lg font-bold">Virtual</p>
+                    <span class="iconify text-2xl text-white/60" data-icon="lucide:wifi"></span>
+                  </div>
+                  <p class="font-mono tracking-widest mb-6">•••• •••• •••• 7312</p>
+                  <div class="flex justify-between items-end">
+                    <div>
+                      <p class="text-violet-200 text-xs">CARD HOLDER</p>
+                      <p class="font-semibold text-sm">ALEX MORRISON</p>
+                    </div>
+                    <div>
+                      <p class="text-violet-200 text-xs">EXPIRES</p>
+                      <p class="font-semibold text-sm">12/25</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="mt-4 flex gap-3">
+                  <button
+                    class="flex-1 px-4 py-3 bg-dark-50 dark:bg-dark-800 rounded-xl text-sm font-semibold hover:bg-dark-100 dark:hover:bg-dark-700 transition-colors flex items-center justify-center gap-2">
+                    <span class="iconify" data-icon="lucide:copy"></span> Copy Details
+                  </button>
+                  <button
+                    class="flex-1 px-4 py-3 bg-dark-50 dark:bg-dark-800 rounded-xl text-sm font-semibold hover:bg-dark-100 dark:hover:bg-dark-700 transition-colors flex items-center justify-center gap-2">
+                    <span class="iconify" data-icon="lucide:plus"></span> New Virtual
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Tab -->
+          <div id="dtab-analytics" class="dashboard-tab hidden">
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+              <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <h3 class="font-bold mb-6">Monthly Overview</h3>
+                <svg viewBox="0 0 400 200" class="w-full">
+                  <defs>
+                    <linearGradient id="analyticsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:0.15" />
+                      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:0" />
+                    </linearGradient>
+                  </defs>
+                  <line x1="0" y1="50" x2="400" y2="50" stroke="currentColor" stroke-width="0.5"
+                    class="text-dark-100 dark:text-dark-700" />
+                  <line x1="0" y1="100" x2="400" y2="100" stroke="currentColor" stroke-width="0.5"
+                    class="text-dark-100 dark:text-dark-700" />
+                  <line x1="0" y1="150" x2="400" y2="150" stroke="currentColor" stroke-width="0.5"
+                    class="text-dark-100 dark:text-dark-700" />
+                  <path
+                    d="M0,160 C40,140 80,120 120,130 C160,140 200,60 240,80 C280,100 320,40 360,50 C380,55 400,45 400,45 L400,200 L0,200Z"
+                    fill="url(#analyticsGrad)" />
+                  <path
+                    d="M0,160 C40,140 80,120 120,130 C160,140 200,60 240,80 C280,100 320,40 360,50 C380,55 400,45 400,45"
+                    fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" class="chart-line" />
+                  <circle cx="360" cy="50" r="4" fill="#2563eb" />
+                </svg>
+              </div>
+              <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <h3 class="font-bold mb-6">Spending Categories</h3>
+                <div class="space-y-4">
+                  <div>
+                    <div class="flex justify-between mb-1"><span class="text-sm">Shopping</span><span
+                        class="text-sm font-semibold">$1,840 (43%)</span></div>
+                    <div class="h-2 bg-dark-100 dark:bg-dark-700 rounded-full">
+                      <div class="h-2 bg-brand-500 rounded-full" style="width:43%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between mb-1"><span class="text-sm">Food & Dining</span><span
+                        class="text-sm font-semibold">$980 (23%)</span></div>
+                    <div class="h-2 bg-dark-100 dark:bg-dark-700 rounded-full">
+                      <div class="h-2 bg-cyan-500 rounded-full" style="width:23%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between mb-1"><span class="text-sm">Entertainment</span><span
+                        class="text-sm font-semibold">$840 (20%)</span></div>
+                    <div class="h-2 bg-dark-100 dark:bg-dark-700 rounded-full">
+                      <div class="h-2 bg-amber-500 rounded-full" style="width:20%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between mb-1"><span class="text-sm">Transport</span><span
+                        class="text-sm font-semibold">$620 (14%)</span></div>
+                    <div class="h-2 bg-dark-100 dark:bg-dark-700 rounded-full">
+                      <div class="h-2 bg-violet-500 rounded-full" style="width:14%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Tab -->
+          <div id="dtab-settings" class="dashboard-tab hidden">
+            <div class="max-w-2xl space-y-6">
+              <!-- Profile -->
+              <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <h3 class="font-bold mb-6">Profile Settings</h3>
+                <div class="flex items-center gap-6 mb-6">
+                  <div class="w-20 h-20 bg-brand-100 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center">
+                    <span class="iconify text-3xl text-brand-600" data-icon="lucide:user"></span>
+                  </div>
+                  <div>
+                    <p class="font-bold text-lg">Alex Morrison</p>
+                    <p class="text-sm text-dark-400">alex.morrison@email.com</p>
+                    <button class="mt-2 text-sm text-brand-600 font-semibold">Change Photo</button>
+                  </div>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium mb-2">First Name</label>
+                    <input type="text" value="Alex"
+                      class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Last Name</label>
+                    <input type="text" value="Morrison"
+                      class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Email</label>
+                    <input type="email" value="alex.morrison@email.com"
+                      class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium mb-2">Phone</label>
+                    <input type="tel" value="+1 (555) 123-4567"
+                      class="w-full px-4 py-3 rounded-xl border border-dark-200 dark:border-dark-700 bg-white dark:bg-dark-900">
+                  </div>
+                </div>
+                <button
+                  class="mt-6 px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl transition-colors">Save
+                  Changes</button>
+              </div>
+
+              <!-- Notifications -->
+              <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-dark-100 dark:border-dark-700">
+                <h3 class="font-bold mb-6">Notification Preferences</h3>
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-medium text-sm">Transaction Alerts</p>
+                      <p class="text-xs text-dark-400">Get notified for every transaction</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-medium text-sm">Security Alerts</p>
+                      <p class="text-xs text-dark-400">Unusual activity notifications</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-medium text-sm">Marketing Emails</p>
+                      <p class="text-xs text-dark-400">Product updates and offers</p>
+                    </div>
+                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-medium text-sm">Weekly Reports</p>
+                      <p class="text-xs text-dark-400">Spending summary every Monday</p>
+                    </div>
+                    <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer id="siteFooter" class="bg-dark-900 dark:bg-dark-950 text-dark-300 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div class="col-span-2 md:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
+              <span class="iconify text-white text-sm" data-icon="lucide:landmark"></span>
+            </div>
+            <span class="font-bold text-white">NexBank</span>
+          </div>
+          <p class="text-sm text-dark-500 leading-relaxed">Modern banking for the digital age. Send, spend, and save
+            smarter.</p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white text-sm mb-4">Products</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a onclick="navigateTo('personal')"
+                class="hover:text-white cursor-pointer transition-colors">Personal</a></li>
+            <li><a onclick="navigateTo('business')"
+                class="hover:text-white cursor-pointer transition-colors">Business</a></li>
+            <li><a onclick="navigateTo('pricing')" class="hover:text-white cursor-pointer transition-colors">Pricing</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white text-sm mb-4">Company</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a class="hover:text-white cursor-pointer transition-colors">About</a></li>
+            <li><a class="hover:text-white cursor-pointer transition-colors">Careers</a></li>
+            <li><a class="hover:text-white cursor-pointer transition-colors">Press</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white text-sm mb-4">Resources</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a onclick="navigateTo('support')" class="hover:text-white cursor-pointer transition-colors">Help
+                Center</a></li>
+            <li><a onclick="navigateTo('security')"
+                class="hover:text-white cursor-pointer transition-colors">Security</a></li>
+            <li><a class="hover:text-white cursor-pointer transition-colors">API Docs</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white text-sm mb-4">Legal</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a class="hover:text-white cursor-pointer transition-colors">Privacy</a></li>
+            <li><a class="hover:text-white cursor-pointer transition-colors">Terms</a></li>
+            <li><a class="hover:text-white cursor-pointer transition-colors">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-dark-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-dark-500">© 2024 NexBank. All rights reserved.</p>
+        <div class="flex items-center gap-4">
+          <a class="text-dark-500 hover:text-white transition-colors cursor-pointer"><span class="iconify text-xl"
+              data-icon="lucide:twitter"></span></a>
+          <a class="text-dark-500 hover:text-white transition-colors cursor-pointer"><span class="iconify text-xl"
+              data-icon="lucide:linkedin"></span></a>
+          <a class="text-dark-500 hover:text-white transition-colors cursor-pointer"><span class="iconify text-xl"
+              data-icon="lucide:github"></span></a>
+          <a class="text-dark-500 hover:text-white transition-colors cursor-pointer"><span class="iconify text-xl"
+              data-icon="lucide:instagram"></span></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div id="toast"
+    class="fixed bottom-6 right-6 z-[100] transform translate-y-20 opacity-0 transition-all duration-500 pointer-events-none">
+    <div
+      class="flex items-center gap-3 px-6 py-4 bg-white dark:bg-dark-800 rounded-2xl shadow-2xl border border-dark-100 dark:border-dark-700">
+      <span class="iconify text-green-500 text-xl" data-icon="lucide:check-circle-2"></span>
+      <span id="toastMessage" class="text-sm font-medium">Action completed!</span>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // ===== Navigation / SPA Routing =====
+    function navigateTo(page) {
+      // Hide all pages
+      document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+
+      // Show target page
+      const target = document.getElementById('page-' + page);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      // Update nav active states
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.nav === page) link.classList.add('active');
+      });
+
+      // Handle footer visibility
+      const footer = document.getElementById('siteFooter');
+      if (page === 'dashboard' || page === 'login' || page === 'signup') {
+        footer.style.display = 'none';
+      } else {
+        footer.style.display = 'block';
+      }
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== Dark Mode =====
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+    }
+
+    // Check saved preference
+    if (localStorage.getItem('darkMode') === 'true' ||
+      (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    // ===== Mobile Menu =====
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // ===== Navbar Background on Scroll =====
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 20) {
+        navbar.classList.add('bg-white/80', 'dark:bg-dark-950/80', 'backdrop-blur-xl', 'shadow-sm', 'border-b', 'border-dark-100', 'dark:border-dark-800');
+      } else {
+        navbar.classList.remove('bg-white/80', 'dark:bg-dark-950/80', 'backdrop-blur-xl', 'shadow-sm', 'border-b', 'border-dark-100', 'dark:border-dark-800');
+      }
+    });
+
+    // ===== FAQ Toggle =====
+    function toggleFaq(button) {
+      const answer = button.nextElementSibling;
+      const icon = button.querySelector('.iconify');
+      const isOpen = !answer.classList.contains('hidden');
+
+      // Close all FAQs
+      document.querySelectorAll('.faq-answer').forEach(a => a.classList.add('hidden'));
+      document.querySelectorAll('.faq-item .iconify').forEach(i => {
+        i.setAttribute('data-icon', 'lucide:plus');
+        i.style.transform = '';
+      });
+
+      if (!isOpen) {
+        answer.classList.remove('hidden');
+        icon.setAttribute('data-icon', 'lucide:minus');
+      }
+    }
+
+    // ===== Dashboard Tabs =====
+    function switchDashboardTab(tab) {
+      document.querySelectorAll('.dashboard-tab').forEach(t => t.classList.add('hidden'));
+      const target = document.getElementById('dtab-' + tab);
+      if (target) target.classList.remove('hidden');
+
+      // Update sidebar active
+      document.querySelectorAll('.dashboard-sidebar-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.dtab === tab) link.classList.add('active');
+      });
+
+      // Update mobile nav buttons
+      document.querySelectorAll('[data-dtab-m]').forEach(btn => {
+        btn.className = btn.dataset.dtabM === tab
+          ? 'shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-brand-600 text-white'
+          : 'shrink-0 px-4 py-2 rounded-xl text-sm font-medium bg-dark-100 dark:bg-dark-800';
+      });
+
+      // Update title
+      const titles = {
+        overview: ['Overview', 'Welcome back, Alex'],
+        transactions: ['Transactions', 'Your transaction history'],
+        cards: ['Cards', 'Manage your cards'],
+        analytics: ['Analytics', 'Your financial insights'],
+        settings: ['Settings', 'Manage your account']
+      };
+      if (titles[tab]) {
+        document.getElementById('dashboardTitle').textContent = titles[tab][0];
+        document.getElementById('dashboardSubtitle').textContent = titles[tab][1];
+      }
+    }
+
+    function toggleDashboardMobileNav() {
+      document.getElementById('dashboardMobileNav').classList.toggle('hidden');
+    }
+
+    // ===== Toast Notification =====
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    // ===== Form Handlers =====
+    function handleLogin(e) {
+      e.preventDefault();
+      showToast('Login successful! Redirecting to dashboard...');
+      setTimeout(() => navigateTo('dashboard'), 1000);
+    }
+
+    function handleSignup(e) {
+      e.preventDefault();
+      showToast('Account created successfully! Welcome to NexBank.');
+      setTimeout(() => navigateTo('dashboard'), 1000);
+    }
+
+    function handleSupportSubmit(e) {
+      e.preventDefault();
+      showToast('Message sent! We\'ll respond within 4 hours.');
+      e.target.reset();
+    }
+
+    // ===== Password Visibility Toggle =====
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      const button = input.nextElementSibling;
+      const icon = button.querySelector('.iconify');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-icon', 'lucide:eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-icon', 'lucide:eye');
+      }
+    }
+
+    // ===== Initial setup: hide footer on dashboard/login/signup =====
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set initial nav bg
+      if (window.scrollY > 20) {
+        document.getElementById('navbar').classList.add('bg-white/80', 'dark:bg-dark-950/80', 'backdrop-blur-xl', 'shadow-sm');
+      }
+    });
+  </script>
+</body>
+
+</html>
