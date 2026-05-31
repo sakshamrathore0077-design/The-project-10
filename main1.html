@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AURA | Digital Studio</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ========================================
+           GLOBAL DESIGN SYSTEM & VARIABLES (PRESERVED)
+        ======================================== */
+        :root {
+            --bg: #0a0a0a;
+            --bg-secondary: #111111;
+            --text: #f5f5f7;
+            --text-muted: #a1a1a6;
+            --accent: #d4af37;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glow: rgba(212, 175, 55, 0.3);
+            --transition: cubic-bezier(0.76, 0, 0.24, 1);
+        }
+
+        [data-theme="light"] {
+            --bg: #f9f9f7;
+            --bg-secondary: #ffffff;
+            --text: #1d1d1f;
+            --text-muted: #6e6e73;
+            --accent: #c5a059;
+            --glass: rgba(0, 0, 0, 0.03);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --glow: rgba(197, 160, 89, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            cursor: none;
+            transition: background-color 0.8s var(--transition), color 0.8s var(--transition);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        a,
+        button {
+            cursor: none;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Noise overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--text);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: width 0.4s var(--transition), height 0.4s var(--transition), border-color 0.4s var(--transition);
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .cursor.hover {
+            width: 60px;
+            height: 60px;
+            border-color: var(--accent);
+        }
+
+        /* Loader (preserved) */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #loader h2 {
+            font-size: 3rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        #loader h2 span {
+            display: inline-block;
+            animation: revealUp 1s var(--transition) forwards;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        @keyframes revealUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation (improved for mobile) */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        .logo {
+            font-family: 'Syne';
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--text);
+            transition: width 0.5s var(--transition);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid var(--glass-border);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        .theme-toggle:hover {
+            background: var(--glass);
+        }
+
+        /* Sections base */
+        .section-padding {
+            padding: 8rem 4rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 5rem);
+            margin-bottom: 4rem;
+        }
+
+        /* Reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s var(--transition);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding: 0 4rem;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 8rem);
+            max-width: 90%;
+            margin-bottom: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 40rem;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            padding: 1rem 2.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 30px var(--glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--glass-border);
+            padding: 1rem 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+            border-radius: 2px;
+            background: transparent;
+            transition: all 0.4s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass);
+            border-color: var(--accent);
+        }
+
+        /* Floating panels */
+        .floating-panel {
+            position: absolute;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .panel-1 {
+            width: 200px;
+            height: 120px;
+            top: 20%;
+            right: 15%;
+        }
+
+        .panel-2 {
+            width: 150px;
+            height: 80px;
+            top: 40%;
+            right: 10%;
+            animation-delay: -2s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Services grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 4px;
+            transition: all 0.5s var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouseX, 50%) var(--mouseY, 50%), var(--glow), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .service-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .service-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Gallery Carousel */
+        .gallery-container {
+            position: relative;
+            height: 70vh;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            width: 300px;
+            height: 533px;
+            transform-style: preserve-3d;
+        }
+
+        .gallery-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.6s var(--transition);
+            background: var(--bg-secondary);
+            cursor: pointer;
+        }
+
+        .gallery-card.prev {
+            transform: translateX(-120%) scale(0.85) rotateY(5deg);
+            z-index: 1;
+            opacity: 0.6;
+            filter: brightness(0.6);
+        }
+
+        .gallery-card.active {
+            transform: translateX(0) scale(1) rotateY(0deg);
+            z-index: 3;
+            opacity: 1;
+            filter: brightness(1);
+            border-color: var(--accent);
+        }
+
+        .gallery-card.next {
+            transform: translateX(120%) scale(0.85) rotateY(-5deg);
+            z-index: 1;
+            opacity: 0.6;
+            filter: brightness(0.6);
+        }
+
+        .gallery-card.hidden-card {
+            transform: translateX(0) scale(0.7);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .card-scroll-container {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .card-scroll-bg {
+            width: 100%;
+            height: 200%;
+            background-size: cover;
+            background-position: top;
+            animation: scrollDown 18s linear infinite;
+        }
+
+        @keyframes scrollDown {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-50%);
+            }
+        }
+
+        .card-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+            z-index: 2;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+        }
+
+        /* Gallery Navigation (mobile optimized) */
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 15;
+            padding: 0 1rem;
+        }
+
+        .gallery-btn {
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.25s;
+            cursor: pointer;
+        }
+
+        .gallery-btn:hover {
+            border-color: var(--accent);
+            background: var(--glass);
+            transform: scale(1.05);
+        }
+
+        /* About section */
+        .about-story {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-text {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: var(--text-muted);
+        }
+
+        .about-text em {
+            color: var(--text);
+            font-style: normal;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 5rem;
+        }
+
+        .team-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .team-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--bg);
+            margin: 0 auto 1.5rem;
+            border: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .team-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            color: var(--accent);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            color: var(--accent);
+            font-family: 'Syne';
+            font-weight: 800;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Contact */
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-heading {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            margin-bottom: 2rem;
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 3rem;
+        }
+
+        .contact-link {
+            font-size: 1.2rem;
+            border: 1px solid var(--glass-border);
+            padding: 1.2rem;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .contact-link:hover {
+            border-color: var(--accent);
+            background: var(--glass);
+        }
+
+        .contact-link span {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            color: var(--text);
+            border-radius: 2px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--glow);
+        }
+
+        /* OUTRO - 3 COLUMNS (new) */
+        .outro {
+            margin-top: 6rem;
+            padding: 5rem 4rem 4rem;
+            border-top: 1px solid var(--glass-border);
+            background: var(--bg-secondary);
+        }
+
+        .outro-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .outro-col h4 {
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.8rem;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .outro-col ul {
+            list-style: none;
+        }
+
+        .outro-col li {
+            margin-bottom: 1rem;
+        }
+
+        .outro-col a {
+            color: var(--text-muted);
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .outro-col a:hover {
+            color: var(--accent);
+            padding-left: 5px;
+        }
+
+        .sample-item {
+            display: block;
+            margin-bottom: 0.8rem;
+        }
+
+        .names-list p {
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 4rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        /* responsive */
+        @media (max-width: 1024px) {
+            .section-padding {
+                padding: 6rem 2rem;
+            }
+
+            .hero {
+                padding: 0 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 3rem;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .outro-grid {
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.2rem;
+                flex-wrap: wrap;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+            }
+
+            .nav-link {
+                font-size: 0.7rem;
+            }
+
+            .theme-toggle {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
+
+            .section-padding {
+                padding: 4rem 1.5rem;
+            }
+
+            .hero {
+                padding: 0 1.5rem;
+            }
+
+            .hero-title {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+            }
+
+            .floating-panel {
+                display: none;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .carousel-wrapper {
+                width: 85vw;
+                height: calc(85vw * 1.6);
+            }
+
+            /* gallery arrows mobile -> fully visible & adjusted */
+            .gallery-nav {
+                top: auto;
+                bottom: -70px;
+                transform: none;
+                justify-content: center;
+                gap: 2rem;
+                padding: 0;
+            }
+
+            .gallery-btn {
+                width: 55px;
+                height: 55px;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(4px);
+            }
+
+            .gallery-container {
+                margin-bottom: 80px;
+            }
+
+            .outro-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .outro {
+                padding: 3rem 1.5rem;
+            }
+
+            .outro-col h4 {
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 0.9rem;
+            }
+
+            .gallery-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise"></div>
+    <div class="cursor"></div>
+
+    <!-- Loader -->
+    <div id="loader">
+        <h2><span style="animation-delay:0.2s">A</span><span style="animation-delay:0.3s">U</span><span
+                style="animation-delay:0.4s">R</span><span style="animation-delay:0.5s">A</span></h2>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo" id="homeLink">AURA</a>
+        <div class="nav-links">
+            <a href="#" class="nav-link" data-scroll="hero">Home</a>
+            <a href="#" class="nav-link" data-scroll="work">Work</a>
+            <a href="#" class="nav-link" data-scroll="about">About</a>
+            <a href="#" class="nav-link" data-scroll="contact">Contact</a>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">Light / Dark</button>
+    </nav>
+
+    <!-- MAIN CONTENT: Single page sections -->
+    <main>
+        <!-- HERO section -->
+        <section id="hero-section" class="hero">
+            <div class="floating-panel panel-1"></div>
+            <div class="floating-panel panel-2"></div>
+            <h1 class="hero-title reveal">We Build Digital Experiences That Feel Alive.</h1>
+            <p class="hero-subtitle reveal">An ambitious creative studio merging premium design, AI automation, and
+                cinematic storytelling for the modern elite.</p>
+            <div class="hero-btns reveal">
+                <button class="btn-primary magnetic"
+                    onclick="document.getElementById('work-section').scrollIntoView({behavior:'smooth'})">View Our
+                    Work</button>
+                <button class="btn-secondary magnetic"
+                    onclick="document.getElementById('contact-section').scrollIntoView({behavior:'smooth'})">Contact
+                    Us</button>
+            </div>
+        </section>
+
+        <!-- SERVICES (What We Forge) -->
+        <section id="services-section" class="section-padding">
+            <h2 class="section-title reveal">What We Forge</h2>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <div class="service-icon">◇</div>
+                    <h3 class="service-title">Website Design</h3>
+                    <p class="service-desc">Cinematic, immersive, and ultra-premium digital real estate that converts.
+                    </p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon">⬡</div>
+                    <h3 class="service-title">AI Automation</h3>
+                    <p class="service-desc">Eliminate friction. We build smart systems that scale your operations
+                        silently.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon">◎</div>
+                    <h3 class="service-title">Chatbots</h3>
+                    <p class="service-desc">24/7 intelligent concierges that speak your brand's language.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon">△</div>
+                    <h3 class="service-title">SEO Management</h3>
+                    <p class="service-desc">Dominating the unseen algorithms to put you at the top of the food chain.
+                    </p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon">✦</div>
+                    <h3 class="service-title">Marketing</h3>
+                    <p class="service-desc">Strategic, data-driven campaigns that resonate with high-net-worth
+                        audiences.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORK PAGE (gallery) after "What We Forge" -->
+        <section id="work-section" class="section-padding" style="padding-top: 0;">
+            <h2 class="section-title reveal" style="text-align: center;">Selected Works</h2>
+            <div class="gallery-container">
+                <div class="gallery-nav">
+                    <button class="gallery-btn magnetic" id="prevBtn">←</button>
+                    <button class="gallery-btn magnetic" id="nextBtn">→</button>
+                </div>
+                <div class="carousel-wrapper" id="carousel"></div>
+            </div>
+            <p style="text-align: center; color: var(--text-muted); margin-top: 2rem;" class="reveal">Click to explore
+                the live experience</p>
+        </section>
+
+        <!-- ABOUT section -->
+        <section id="about-section" class="section-padding">
+            <div class="about-story">
+                <h2 class="section-title reveal">Our Origin</h2>
+                <p class="about-text reveal">It started with sleepless nights, a shared passion for technology, and a
+                    single project for a music teacher. We are three freelancers who <em>refused to settle</em> for
+                    ordinary. While others followed templates, we studied art, cinema, and the unspoken language of
+                    luxury.</p>
+                <p class="about-text reveal">We believe that a digital presence should feel like an experience—an
+                    immersion. From those early days of learning code in dimly lit rooms to building <em>world-class
+                        experiences</em> for premium clients, our ambition has only grown.</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card reveal">
+                    <div class="team-avatar">A</div>
+                    <h3 class="team-name">Alex</h3>
+                    <div class="team-role">Designer</div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-avatar">M</div>
+                    <h3 class="team-name">Morgan</h3>
+                    <div class="team-role">Developer</div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-avatar">J</div>
+                    <h3 class="team-name">Jordan</h3>
+                    <div class="team-role">Automation Specialist</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NUMBERS section (stats, after about) -->
+        <section id="numbers-section" class="section-padding">
+            <h2 class="section-title reveal">The Numbers</h2>
+            <div class="stats-grid">
+                <div class="reveal">
+                    <div class="stat-number counter" data-target="42">0</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="reveal">
+                    <div class="stat-number counter" data-target="18">0</div>
+                    <div class="stat-label">Happy Clients</div>
+                </div>
+                <div class="reveal">
+                    <div class="stat-number counter" data-target="3">0</div>
+                    <div class="stat-label">Years Learning</div>
+                </div>
+                <div class="reveal">
+                    <div class="stat-number counter" data-target="12">0</div>
+                    <div class="stat-label">AI Automations Built</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT section (after numbers) -->
+        <section id="contact-section" class="section-padding">
+            <div class="contact-container">
+                <h2 class="contact-heading reveal">Let's Create</h2>
+                <div class="contact-links">
+                    <a href="mailto:hello@aura.studio" class="contact-link magnetic reveal"><span>Email</span>
+                        hello@aura.studio</a>
+                    <a href="tel:+1234567890" class="contact-link magnetic reveal"><span>Phone</span> +1 (234)
+                        567-890</a>
+                    <a href="#" class="contact-link magnetic reveal"><span>WhatsApp</span> Chat Now</a>
+                </div>
+                <form onsubmit="event.preventDefault();" class="reveal">
+                    <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-input"
+                            placeholder="Your Name"></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email"
+                            class="form-input" placeholder="your@email.com"></div>
+                    <div class="form-group"><label class="form-label">Message</label><textarea class="form-input"
+                            rows="4" placeholder="Tell us about your vision..."></textarea></div>
+                    <button type="submit" class="btn-primary" style="width:100%;">Send Message</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- OUTRO (three columns) -->
+        <footer class="outro">
+            <div class="outro-grid">
+                <div class="outro-col">
+                    <h4>Navigate</h4>
+                    <ul>
+                        <li><a href="#" data-scroll="hero">Home</a></li>
+                        <li><a href="#" data-scroll="work">Work</a></li>
+                        <li><a href="#" data-scroll="about">About</a></li>
+                        <li><a href="#" data-scroll="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="outro-col">
+                    <h4>Our Samples</h4>
+                    <div id="sampleLinksContainer"></div>
+                </div>
+                <div class="outro-col">
+                    <h4>Creators</h4>
+                    <div class="names-list">
+                        <p>✦ Alex Reinhardt</p>
+                        <p>✦ Morgan Sterling</p>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem;">The vision behind AURA
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">© 2024 AURA DIGITAL STUDIO. ALL RIGHTS RESERVED.</div>
+        </footer>
+    </main>
+
+    <script>
+        // ========== GALLERY DATA (unchanged) ==========
+        const websites = [
+            { title: "Lumina SaaS", tag: "Fintech", img: "website1.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website1.html" },
+            { title: "Obsidian Agency", tag: "Luxury Agency", img: "website2.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website2.html" },
+            { title: "Zenith AI", tag: "AI Startup", img: "website3.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website3.html" },
+            { title: "Aura Real Estate", tag: "Premium Property", img: "website4.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website4.html" },
+            { title: "Velvet Commerce", tag: "E-Commerce", img: "website5.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website5.html" },
+            { title: "Apex Dashboard", tag: "Data Analytics", img: "website6.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website6.html" },
+            { title: "Noir Fashion", tag: "Fashion", img: "website7.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website7.html" },
+            { title: "Crypto Vault", tag: "Web3", img: "website8.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website8.html" },
+            { title: "Paradigm Health", tag: "MedTech", img: "website9.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website9.html" },
+            { title: "Echo Social", tag: "Social App", img: "website10.png", url: "https://sakshamrathore0077-design.github.io/The-project-10/website10.html" }
+        ];
+        let activeIndex = 0;
+        const carouselEl = document.getElementById('carousel');
+
+        function initCarousel() {
+            carouselEl.innerHTML = '';
+            websites.forEach((site, idx) => {
+                const card = document.createElement('a');
+                card.href = site.url;
+                card.target = "_blank";
+                card.className = 'gallery-card';
+                card.innerHTML = `
+                    <div class="card-scroll-container">
+                        <div class="card-scroll-bg" style="background-image: url('${site.img}'); background-repeat: repeat-y; background-position: top;"></div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title">${site.title}</div>
+                        <div class="card-tag">${site.tag}</div>
+                    </div>
+                `;
+                carouselEl.appendChild(card);
+            });
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const cards = document.querySelectorAll('.gallery-card');
+            cards.forEach((card, idx) => {
+                card.classList.remove('active', 'prev', 'next', 'hidden-card');
+                if (idx === activeIndex) card.classList.add('active');
+                else if (idx === activeIndex - 1 || (activeIndex === 0 && idx === websites.length - 1)) card.classList.add('prev');
+                else if (idx === activeIndex + 1 || (activeIndex === websites.length - 1 && idx === 0)) card.classList.add('next');
+                else card.classList.add('hidden-card');
+            });
+        }
+
+        function moveCarousel(direction) {
+            activeIndex = (activeIndex + direction + websites.length) % websites.length;
+            updateCarousel();
+        }
+
+        document.getElementById('prevBtn')?.addEventListener('click', () => moveCarousel(-1));
+        document.getElementById('nextBtn')?.addEventListener('click', () => moveCarousel(1));
+
+        // Generate "Our Samples" links for the outro
+        function buildSampleColumn() {
+            const container = document.getElementById('sampleLinksContainer');
+            if (container) {
+                container.innerHTML = websites.slice(0, 5).map(site => `<a href="${site.url}" target="_blank" class="sample-item">${site.title}</a>`).join('');
+            }
+        }
+
+        // ========== SMOOTH SCROLL & SINGLE PAGE NAV ==========
+        function setupScrollLinks() {
+            const links = document.querySelectorAll('[data-scroll]');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-scroll');
+                    let section = null;
+                    if (targetId === 'hero') section = document.getElementById('hero-section');
+                    else if (targetId === 'work') section = document.getElementById('work-section');
+                    else if (targetId === 'about') section = document.getElementById('about-section');
+                    else if (targetId === 'contact') section = document.getElementById('contact-section');
+                    if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+            document.getElementById('homeLink')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('hero-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        // ========== REVEAL OBSERVER ==========
+        function triggerReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } });
+            }, { threshold: 0.1 });
+            reveals.forEach(el => observer.observe(el));
+        }
+
+        // Counters
+        let countStarted = false;
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !countStarted) {
+                    countStarted = true;
+                    document.querySelectorAll('.counter').forEach(counter => {
+                        const target = +counter.getAttribute('data-target');
+                        let current = 0;
+                        const increment = target / 40;
+                        const update = () => {
+                            current += increment;
+                            if (current < target) { counter.innerText = Math.ceil(current); setTimeout(update, 45); }
+                            else counter.innerText = target;
+                        };
+                        update();
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // ========== CURSOR + MAGNETIC + GLOW ==========
+        const cursor = document.querySelector('.cursor');
+        window.addEventListener('mousemove', (e) => { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; });
+        document.querySelectorAll('a, button, .service-card, .hub-row, .gallery-btn').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+        document.querySelectorAll('.magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+            });
+            btn.addEventListener('mouseleave', () => btn.style.transform = 'translate(0px,0px)');
+        });
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouseX', `${x}%`);
+                card.style.setProperty('--mouseY', `${y}%`);
+            });
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        }
+        window.toggleTheme = toggleTheme;
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+                initCarousel();
+                buildSampleColumn();
+                setupScrollLinks();
+                triggerReveal();
+                const statsSec = document.getElementById('numbers-section');
+                if (statsSec) counterObserver.observe(statsSec);
+            }, 1200);
+        });
+    </script>
+</body>
+
+</html>
